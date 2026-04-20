@@ -1074,7 +1074,8 @@ function renderInnings(bat, careerAvg) {
     const sixes  = g.reduce((s,r) => s+safeNum(r['6s']), 0);
     const ducks  = g.filter(r => safeNum(r['Runs'])===0 && isDismissed(r)).length;
     const fifties= g.filter(r => { const x=safeNum(r['Runs']); return x>=50&&x<100; }).length;
-    return { inns, dis, runs, balls, avg:a, sr:s, hi, fours, sixes, ducks, fifties };
+    const hundreds = g.filter(r => safeNum(r['Runs'])>=100).length;
+    return { inns, dis, runs, balls, avg:a, sr:s, hi, fours, sixes, ducks, fifties, hundreds };
   }
 
   const s1 = calcGroup(g1);
@@ -1136,6 +1137,7 @@ function renderInnings(bat, careerAvg) {
     ${row('Runs',    s1.runs,   s2.runs)}
     ${row('High',    s1.hi,     s2.hi)}
     ${row('50s',     s1.fifties,s2.fifties)}
+    ${row('100s',    s1.hundreds,s2.hundreds)}
     ${row('4s',      s1.fours,  s2.fours)}
     ${row('6s',      s1.sixes,  s2.sixes)}
     ${row('Ducks',   s1.ducks,  s2.ducks, true)}
@@ -1431,6 +1433,9 @@ function initPosition(rawData) {
   tbl.appendChild(tbody);
 
   const barColors = positions.map(p => p === bestPos ? '#f0a040' : '#4e9af1');
+  // For SR chart, highlight the position with highest SR
+  const bestSRPos = positions.reduce((x,p) => sr(byPos[p]) > sr(byPos[x]) ? p : x, positions[0]);
+  const srBarColors = positions.map(p => p === bestSRPos ? '#4cc9c0' : '#f0803c');
 
   /* Chart 1 – Avg by Position */
   new Chart(document.getElementById('cPosAvg'), {
@@ -1457,7 +1462,7 @@ function initPosition(rawData) {
   /* Chart 2 – SR by Position */
   new Chart(document.getElementById('cPosSR'), {
     type:'bar',
-    data:{ labels:posLabels, datasets:[{ data:posSR, backgroundColor:positions.map(p=>p===bestPos?'#4cc9c0':'#f0803c'), borderRadius:3, borderWidth:0 }] },
+    data:{ labels:posLabels, datasets:[{ data:posSR, backgroundColor:srBarColors, borderRadius:3, borderWidth:0 }] },
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ title:i=>`${posLabels[i[0].dataIndex]}`, label:i=>` SR: ${i.raw}` }} },
       scales:{
