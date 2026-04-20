@@ -310,6 +310,33 @@
       .stat-cards { grid-template-columns: repeat(4, 1fr); }
     }
   </style>
+<script>
+// Move critical tab switching logic here so it's available before sidebar links
+// ...existing code...
+
+// ...existing code...
+
+function showTab(name, linkEl) {
+  TAB_IDS.forEach(id => {
+    document.getElementById('tab-' + id).style.display = id === name ? '' : 'none';
+  });
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+  if (linkEl) linkEl.classList.add('active');
+  if (!_tabCharts[name] && _globalData) {
+    if (name === 'stats')        initStats(_globalData);
+    if (name === 'overview')     initOverview(_globalData);
+    if (name === 'position')     initPosition(_globalData);
+    if (name === 'league')       initLeague(_globalData);
+    if (name === 'phase')        initPhase(_globalData);
+    if (name === 'consistency')  initConsistency(_globalData);
+    if (name === 'bowl-overview') initBowlOverview(_globalData);
+    if (name === 'bowl-league')   initBowlLeague(_globalData);
+    if (name === 'bowl-phase')    initBowlPhase(_globalData);
+    if (name === 'rawdata')        initRawData(_globalData);
+    _tabCharts[name] = true;
+  }
+}
+</script>
 </head>
 <body>
 
@@ -377,7 +404,7 @@
   <!-- ══ Main ══ -->
   <div class="main">
     <div class="content">
-  <div id="tab-stats"       style=""></div>
+  <div id="tab-stats"></div>
   <div id="tab-overview" style="display:none"></div>
   <div id="tab-position"     style="display:none"></div>
   <div id="tab-league"       style="display:none"></div>
@@ -416,17 +443,7 @@ Chart.defaults.font.size = 11;
 /* ── renamed: overview init ── */
 function initOverview(rawData) { init(rawData); }
 
-/* ── File picker: load fresh CSV downloaded from Google Sheets ── */
-document.getElementById('csvFileInput').addEventListener('change', function(e) {
-  const file = e.target.files[0]; if (!file) return;
-  document.getElementById('loadStatus').textContent = 'Loading…';
-  const reader = new FileReader();
-  reader.onload = ev => {
-    loadFromCsvString(ev.target.result);
-    document.getElementById('loadStatus').textContent = `✓ Loaded: ${file.name}`;
-  };
-  reader.readAsText(file);
-});
+// Removed file input event listener since Google Sheets is used as input.
 
 /* ══════════════════════════════════════
    HELPERS
@@ -3532,4 +3549,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-i
