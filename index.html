@@ -1,4 +1,57 @@
-﻿<!DOCTYPE html>
+﻿  <style>
+    /* Responsive layout for mobile */
+    @media (max-width: 900px) {
+      .shell { flex-direction: column; }
+      .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: 220px;
+        max-width: 80vw;
+        background: #0f1220;
+        z-index: 1002;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+        box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+        border-right: 1px solid var(--border);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-backdrop {
+        display: none;
+        position: fixed; z-index: 1001; left: 0; top: 0; width: 100vw; height: 100vh;
+        background: rgba(20,22,30,0.45);
+      }
+      .sidebar.open ~ .sidebar-backdrop { display: block; }
+      .rightpane { display: none !important; }
+      .main { min-width: 0; }
+    }
+    @media (max-width: 700px) {
+      .header { padding: 0 8px; min-height: 48px; }
+      .header-jersey { width: 34px; height: 34px; }
+      .header-name { font-size: 0.95rem; }
+      .header-links { gap: 6px; }
+      .header-cc-link { padding: 4px 8px; font-size: 0.65rem; }
+      .header-meta { display: none; }
+      .content { padding: 8px 4px; }
+    }
+    /* Hide header on scroll down, show on scroll up */
+    .header.hide { transform: translateY(-100%); transition: transform 0.3s cubic-bezier(.4,0,.2,1); }
+    .header { transition: transform 0.3s cubic-bezier(.4,0,.2,1); position: sticky; top: 0; z-index: 1003; }
+    /* Hamburger for mobile */
+    .hamburger {
+      display: none; position: relative; width: 34px; height: 34px; margin-right: 10px; cursor: pointer; z-index: 1100;
+    }
+    .hamburger span {
+      display: block; height: 4px; width: 24px; background: #f0a040; margin: 5px auto; border-radius: 2px;
+      transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    @media (max-width: 900px) {
+      .hamburger { display: block; }
+    }
+    /* Overlay for sidebar */
+    .sidebar-backdrop { display: none; }
+    .sidebar.open ~ .sidebar-backdrop { display: block; }
+  </style>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -347,7 +400,10 @@ function showTab(name, linkEl) {
 </head>
 <body>
 
-<div class="header">
+<div class="header" id="mainHeader">
+  <div class="hamburger" id="hamburgerBtn" aria-label="Open menu" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
   <div class="header-jersey">
     <div class="jnum">6</div>
     <div class="jlbl">Jersey</div>
@@ -358,11 +414,12 @@ function showTab(name, linkEl) {
       All Rounder
       <span class="sep">|</span>Right Handed Batter
       <span class="sep">|</span>Right Arm Medium
-      <span class="sep">|</span>ID: 3682166
     </div>
   </div>
   <div class="header-links">
-    <a class="header-cc-link" href="https://cricclubs.com/CricketofSanAntonio/viewPlayer.do?playerId=3682166&amp;clubId=6845" target="_blank" rel="noopener">🌐 CricClubs Profile</a>
+      <a class="header-cc-link" href="https://cricclubs.com/CricketofSanAntonio/viewPlayer.do?playerId=3682166&amp;clubId=6845" target="_blank" rel="noopener">
+        🌐 CricClubs Profile <span style="color:#7a8499;font-size:0.8em;margin-left:7px;">(ID: 3682166)</span>
+      </a>
     <!-- Removed Load CSV button and file input -->
     <!-- Removed Load from Google Sheet button -->
     <span id="loadStatus" style="font-size:0.7rem;color:#52c41a;white-space:nowrap"></span>
@@ -374,6 +431,41 @@ function showTab(name, linkEl) {
 
   <!-- ══ Sidebar ══ -->
   <nav class="sidebar" id="sidebar">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script>
+    // Mobile: Hamburger menu toggle
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburgerBtn');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (hamburger && sidebar && backdrop) {
+      function openSidebar() { sidebar.classList.add('open'); backdrop.style.display = 'block'; }
+      function closeSidebar() { sidebar.classList.remove('open'); backdrop.style.display = 'none'; }
+      hamburger.onclick = openSidebar;
+      hamburger.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') openSidebar(); };
+      backdrop.onclick = closeSidebar;
+      window.addEventListener('resize', () => { if (window.innerWidth > 900) closeSidebar(); });
+    }
+    // Hide header on scroll down, show on scroll up
+    let lastScroll = window.scrollY;
+    let ticking = false;
+    const header = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => {
+      if (!header) return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const curr = window.scrollY;
+          if (curr > lastScroll && curr > 40) {
+            header.classList.add('hide');
+          } else {
+            header.classList.remove('hide');
+          }
+          lastScroll = curr;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    </script>
     <!-- Player mini-card -->
     <div style="margin:10px 10px 6px;background:linear-gradient(135deg,#1c2035,#252a3b);border:1px solid #333a50;border-radius:8px;padding:10px 12px;text-align:center">
       <div style="width:36px;height:36px;background:linear-gradient(135deg,#f0a040,#e06010);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:1.1rem;font-weight:900;color:#fff;box-shadow:0 2px 8px rgba(240,160,64,0.4)">6</div>
@@ -539,7 +631,7 @@ function init(rawData) {
 
   const lastDate = all[all.length-1]?.['Match Date'] || '—';
   document.getElementById('headerMeta').textContent =
-    `Last match: ${lastDate}  •  Data: ${innings} innings`;
+    `Last match: ${lastDate}`;
 
   /* ── year-by-year ── */
   const byYear = {};
@@ -933,7 +1025,7 @@ function renderDismissal(bat) {
     ${[
       ['Fail (0–9)',        '#e05c5c'],
       ['Start (10–19)',     '#4e9af1'],
-      ['Set (20–29)',       '#7b6cf5'],
+      ['Set (20–29)',       '#f0803c'],
       ['Conversion (30–49)','#f5c842'],
       ['Milestone (50+)',   '#52c41a']
     ]
@@ -951,7 +1043,7 @@ function renderDist(bat, total) {
     { lbl:'Duck',  min:0,   max:0,    c:'#606880', zone:'Failure'    },
     { lbl:'1–9',   min:1,   max:9,    c:'#e05c5c', zone:'Failure'    },
     { lbl:'10–19', min:10,  max:19,   c:'#4e9af1', zone:'Start'      },
-    { lbl:'20–29', min:20,  max:29,   c:'#7b6cf5', zone:'Set'        },
+    { lbl:'20–29', min:20,  max:29,   c:'#f0803c', zone:'Set'        },
     { lbl:'30–49', min:30,  max:49,   c:'#f5c842', zone:'Conversion' },
     { lbl:'50–74', min:50,  max:74,   c:'#52c41a', zone:'Milestone'  },
     { lbl:'75–99', min:75,  max:99,   c:'#a855f7', zone:'Milestone'  },
@@ -968,7 +1060,7 @@ function renderDist(bat, total) {
   const zoneDefs = [
     { name:'Failure',    idx:[0,1], c:'#e05c5c' },
     { name:'Start',      idx:[2],   c:'#4e9af1' },
-    { name:'Set',        idx:[3],   c:'#7b6cf5' },
+    { name:'Set',        idx:[3],   c:'#f0803c' },
     { name:'Conversion', idx:[4],   c:'#f5c842' },
     { name:'Milestone',  idx:[5,6,7],c:'#4cc9c0'},
   ];
@@ -1432,10 +1524,10 @@ function initPosition(rawData) {
   });
   tbl.appendChild(tbody);
 
+  // Unified color style: blue for all, highlight best
   const barColors = positions.map(p => p === bestPos ? '#f0a040' : '#4e9af1');
-  // For SR chart, highlight the position with highest SR
   const bestSRPos = positions.reduce((x,p) => sr(byPos[p]) > sr(byPos[x]) ? p : x, positions[0]);
-  const srBarColors = positions.map(p => p === bestSRPos ? '#4cc9c0' : '#f0803c');
+  const srBarColors = positions.map(p => p === bestSRPos ? '#4cc9c0' : '#4e9af1');
 
   /* Chart 1 – Avg by Position */
   new Chart(document.getElementById('cPosAvg'), {
