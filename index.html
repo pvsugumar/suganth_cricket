@@ -347,9 +347,15 @@
     /* ── Stat Cards ── */
     .stat-cards {
       display: grid;
-      grid-template-columns: repeat(14, 1fr);
-      gap: 6px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
       margin-bottom: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .stat-cards {
+        grid-template-columns: 1fr 1fr 1fr !important;
+      }
     }
     .stat-card {
       background: var(--card-bg);
@@ -1454,7 +1460,7 @@ function initPosition(rawData) {
   const container = document.getElementById('tab-position');
   container.innerHTML = `
     <!-- summary cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-bottom:12px" id="posCards"></div>
+    <div class="stat-cards" style="margin-bottom:12px" id="posCards"></div>
 
     <!-- banner: best role -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;
@@ -1762,7 +1768,7 @@ function initLeague(rawData) {
   const container = document.getElementById('tab-league');
   container.innerHTML = `
     <!-- summary cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-bottom:12px" id="lgCards"></div>
+    <div class="stat-cards" style="margin-bottom:12px" id="lgCards"></div>
 
     <!-- banner -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;
@@ -2883,79 +2889,63 @@ function initStats(rawData) {
 
   document.getElementById('tab-stats').innerHTML = `
     <!-- Form tables row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      ${card('Batting Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🏏', batFormTable)}
-      ${card('Bowling Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🎳', bowlFormTable)}
+    <div class="stat-cards" style="margin-bottom:14px">
+      <div class="stat-card">${card('Batting Form <span style=\"font-size:0.65rem;font-weight:400;color:#7a8499\">— last 10 innings</span>', '🏏', batFormTable)}</div>
+      <div class="stat-card">${card('Bowling Form <span style=\"font-size:0.65rem;font-weight:400;color:#7a8499\">— last 10 innings</span>', '🎳', bowlFormTable)}</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-
-      <!-- BATTING -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        ${card('Batting — Core', '🏏', tbl([
-          statRow('Innings',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
-          statRow('Total Runs',   totalRuns,   ''),
-          statRow('Batting Avg',  batAvg,      dismissed ? `${totalRuns} runs / ${dismissed} dismissals` : ''),
-          statRow('Strike Rate',  batSR,       `${totalBalls} balls faced`),
-          statRow('High Score',   highScore,   ''),
-        ]))}
-
-        ${card('Batting — Milestones', '🏆', tbl([
-          statRow('100s',   hundreds, ''),
-          statRow('50s',    fifties,  ''),
-          statRow('30s',    thirties, '(30–49)'),
-          statRow('Ducks',  ducks,    `${batInns ? (ducks/batInns*100).toFixed(1) : 0}% of innings`),
-        ]))}
-
-        ${card('Batting — Shot Profile', '🎯', tbl([
-          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs`),
-          statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs`),
-          statRow('Threes (3s)',    threes,   ''),
-          statRow('Twos (2s)',      twos,     ''),
-          statRow('Singles (1s)',   singles,  ''),
-          statRow('Dot Balls',      dotBalls, `${dotPct}% of balls`),
-          statRow('Boundary Runs',  boundaryRuns, `${boundaryPct}% of total runs`),
-        ]))}
-
-      </div>
-
-      <!-- BOWLING -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        ${card('Bowling — Core', '🎳', bowlInns === 0
-          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
-          : tbl([
-            statRow('Innings Bowled', bowlInns,   ''),
-            statRow('Wickets',        totalWkts,  ''),
-            statRow('Overs',          totalOvers, `${totalBallsBowled} balls`),
-            statRow('Runs Conceded',  totalRuns2, ''),
-            statRow('Economy',        bEco,       'runs per over'),
-            statRow('Bowling Avg',    bAvg,       'runs per wicket'),
-            statRow('Bowling SR',     bSR,        'balls per wicket'),
-          ])
-        )}
-
-        ${card('Bowling — Control', '🎯', bowlInns === 0
-          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
-          : tbl([
-            statRow('Maidens',      totalMaid,   `${maidenPct}% of overs`),
-            statRow('Dot Balls',    totalDots,   `${dotPctBowl}% of balls`),
-            statRow('Wides',        totalWides,  ''),
-            statRow('No Balls',     totalNoBl,   ''),
-          ])
-        )}
-
-        ${card('Bowling — Wicket Hauls', '⭐', bowlInns === 0
-          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
-          : tbl([
-            statRow('Best Figures',  bestFig,  ''),
-            statRow('3-Wkt Hauls',   haul3,    `${bowlInns ? (haul3/bowlInns*100).toFixed(1) : 0}% of innings`),
-            statRow('5-Wkt Hauls',   haul5,    `${bowlInns ? (haul5/bowlInns*100).toFixed(1) : 0}% of innings`),
-          ])
-        )}
-
-      </div>
+    <div class="stat-cards" style="margin-bottom:14px">
+      <div class="stat-card">${card('Batting — Core', '🏏', tbl([
+        statRow('Innings',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
+        statRow('Total Runs',   totalRuns,   ''),
+        statRow('Batting Avg',  batAvg,      dismissed ? `${totalRuns} runs / ${dismissed} dismissals` : ''),
+        statRow('Strike Rate',  batSR,       `${totalBalls} balls faced`),
+        statRow('High Score',   highScore,   ''),
+      ]))}</div>
+      <div class="stat-card">${card('Batting — Milestones', '🏆', tbl([
+        statRow('100s',   hundreds, ''),
+        statRow('50s',    fifties,  ''),
+        statRow('30s',    thirties, '(30–49)'),
+        statRow('Ducks',  ducks,    `${batInns ? (ducks/batInns*100).toFixed(1) : 0}% of innings`),
+      ]))}</div>
+      <div class="stat-card">${card('Batting — Shot Profile', '🎯', tbl([
+        statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs`),
+        statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs`),
+        statRow('Threes (3s)',    threes,   ''),
+        statRow('Twos (2s)',      twos,     ''),
+        statRow('Singles (1s)',   singles,  ''),
+        statRow('Dot Balls',      dotBalls, `${dotPct}% of balls`),
+        statRow('Boundary Runs',  boundaryRuns, `${boundaryPct}% of total runs`),
+      ]))}</div>
+      <div class="stat-card">${card('Bowling — Core', '🎳', bowlInns === 0
+        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
+        : tbl([
+          statRow('Innings Bowled', bowlInns,   ''),
+          statRow('Wickets',        totalWkts,  ''),
+          statRow('Overs',          totalOvers, `${totalBallsBowled} balls`),
+          statRow('Runs Conceded',  totalRuns2, ''),
+          statRow('Economy',        bEco,       'runs per over'),
+          statRow('Bowling Avg',    bAvg,       'runs per wicket'),
+          statRow('Bowling SR',     bSR,        'balls per wicket'),
+        ])
+      )}</div>
+      <div class="stat-card">${card('Bowling — Control', '🎯', bowlInns === 0
+        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
+        : tbl([
+          statRow('Maidens',      totalMaid,   `${maidenPct}% of overs`),
+          statRow('Dot Balls',    totalDots,   `${dotPctBowl}% of balls`),
+          statRow('Wides',        totalWides,  ''),
+          statRow('No Balls',     totalNoBl,   ''),
+        ])
+      )}</div>
+      <div class="stat-card">${card('Bowling — Wicket Hauls', '⭐', bowlInns === 0
+        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
+        : tbl([
+          statRow('Best Figures',  bestFig,  ''),
+          statRow('3-Wkt Hauls',   haul3,    `${bowlInns ? (haul3/bowlInns*100).toFixed(1) : 0}% of innings`),
+          statRow('5-Wkt Hauls',   haul5,    `${bowlInns ? (haul5/bowlInns*100).toFixed(1) : 0}% of innings`),
+        ])
+      )}</div>
     </div>
   `;
 }
@@ -2988,7 +2978,7 @@ function bowlSR(rows) {
 function initBowlOverview(rawData) {
   const rows = bowlingRows(rawData);
   document.getElementById('tab-bowl-overview').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:14px" id="bowlCards"></div>
+    <div class="stat-cards" style="margin-bottom:14px" id="bowlCards"></div>
     <!-- Wicket hauls row -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:12px 16px;margin-bottom:14px">
       <div style="font-size:0.78rem;font-weight:700;color:#d0d6e8;margin-bottom:10px;display:flex;align-items:center;gap:6px">
