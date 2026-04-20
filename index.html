@@ -930,7 +930,13 @@ function renderDismissal(bat) {
 
   // zone legend
   const legend = `<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
-    ${[['Fail (0–9)','#e05c5c'],['Start (10–29)','#4e9af1'],['Set (30–49)','#f5c842'],['Mile (50+)','#52c41a']]
+    ${[
+      ['Fail (0–9)',        '#e05c5c'],
+      ['Start (10–19)',     '#4e9af1'],
+      ['Set (20–29)',       '#7b6cf5'],
+      ['Conversion (30–49)','#f5c842'],
+      ['Milestone (50+)',   '#52c41a']
+    ]
       .map(([l,c])=>`<span style="font-size:0.58rem;color:${c};display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;background:${c};display:inline-block;border-radius:1px"></span>${l}</span>`).join('')}
   </div>`;
 
