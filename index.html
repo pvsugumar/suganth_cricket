@@ -1215,34 +1215,7 @@ function renderYearVol(years, yearRuns, yearInnings, yearAvgs, careerAVG) {
   });
 }
 
-/* ══════════════════════════════════════
-   TAB SWITCHING
-══════════════════════════════════════ */
-const TAB_IDS   = ['stats','overview','position','league','phase','consistency','bowl-overview','bowl-league','bowl-phase','rawdata'];
-const _tabCharts = {}; // track which tabs have been rendered
-
-function showTab(name, linkEl) {
-  TAB_IDS.forEach(id => {
-    document.getElementById('tab-' + id).style.display = id === name ? '' : 'none';
-  });
-  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-  if (linkEl) linkEl.classList.add('active');
-  if (!_tabCharts[name] && _globalData) {
-    if (name === 'stats')        initStats(_globalData);
-    if (name === 'overview')     initOverview(_globalData);
-    if (name === 'position')     initPosition(_globalData);
-    if (name === 'league')       initLeague(_globalData);
-    if (name === 'phase')        initPhase(_globalData);
-    if (name === 'consistency')  initConsistency(_globalData);
-    if (name === 'bowl-overview') initBowlOverview(_globalData);
-    if (name === 'bowl-league')   initBowlLeague(_globalData);
-    if (name === 'bowl-phase')    initBowlPhase(_globalData);
-    if (name === 'rawdata')        initRawData(_globalData);
-    _tabCharts[name] = true;
-  }
-}
-
-let _globalData = null;
+// ...existing code...
 
 /* ── Load from embedded data immediately ── */
 function loadFromCsvString(csvStr) {
