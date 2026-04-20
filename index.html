@@ -1,11 +1,31 @@
 ﻿  <style>
     /* Responsive layout for mobile */
     @media (max-width: 900px) {
+            /* Ensure all chart cards stack vertically, one per row */
+            .chart-card {
+              display: block !important;
+              width: 100% !important;
+              min-width: 0 !important;
+              margin: 0 0 16px 0 !important;
+              box-sizing: border-box !important;
+            }
+      .row, .row-2, .row-3 {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-auto-flow: row !important;
+      }
+      .chart-card, .stat-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+      .main, .content {
+        overflow-x: hidden !important;
+      }
+      .row-3 { grid-template-columns: 1fr !important; }
       .shell { flex-direction: column; }
       .sidebar {
         position: fixed;
-        left: 0; top: 0; bottom: 0;
-        width: 220px;
         max-width: 80vw;
         background: #0f1220;
         z-index: 1002;
@@ -13,7 +33,13 @@
         transition: transform 0.3s cubic-bezier(.4,0,.2,1);
         box-shadow: 2px 0 16px rgba(0,0,0,0.18);
         border-right: 1px solid var(--border);
+        overflow-y: auto;
+        max-height: calc(100vh - 56px);
+        padding-top: 0;
+        box-sizing: border-box;
       }
+      .stat-cards { grid-template-columns: repeat(7, 1fr); }
+      .row-2, .row-3 { grid-template-columns: 1fr !important; }
       .sidebar.open { transform: translateX(0); }
       .sidebar-backdrop {
         display: none;
@@ -355,9 +381,9 @@
     .phase-legend span { display: flex; align-items: center; gap: 4px; }
     .phase-legend .dot { width: 10px; height: 10px; border-radius: 2px; }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1200px) {
       .stat-cards { grid-template-columns: repeat(7, 1fr); }
-      .row-2, .row-3 { grid-template-columns: 1fr; }
+      .row-2, .row-3 { grid-template-columns: 1fr !important; }
     }
     @media (max-width: 600px) {
       .stat-cards { grid-template-columns: repeat(4, 1fr); }
@@ -431,62 +457,9 @@ function showTab(name, linkEl) {
 
   <!-- ══ Sidebar ══ -->
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-    </div><!-- /shell -->
-
-    <script>
-    // Mobile: Hamburger menu toggle and sidebar logic (moved to end of body for DOM readiness)
-    const sidebar = document.getElementById('sidebar');
-    const hamburger = document.getElementById('hamburgerBtn');
-    const backdrop = document.getElementById('sidebarBackdrop');
-    if (hamburger && sidebar && backdrop) {
-      function openSidebar() { sidebar.classList.add('open'); backdrop.style.display = 'block'; }
-      function closeSidebar() { sidebar.classList.remove('open'); backdrop.style.display = 'none'; }
-      hamburger.onclick = openSidebar;
-      hamburger.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') openSidebar(); };
-      backdrop.onclick = closeSidebar;
-      window.addEventListener('resize', () => { if (window.innerWidth > 900) closeSidebar(); });
-    }
-    // Hide header on scroll down, show on scroll up
-    let lastScroll = window.scrollY;
-    let ticking = false;
-    const header = document.getElementById('mainHeader');
-    window.addEventListener('scroll', () => {
-      if (!header) return;
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const curr = window.scrollY;
-          if (curr > lastScroll && curr > 40) {
-            header.classList.add('hide');
-          } else {
-            header.classList.remove('hide');
-          }
-          lastScroll = curr;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
-    // Mobile: Close sidebar after clicking a link
-    document.querySelectorAll('.sidebar a').forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth <= 900 && sidebar) {
-          sidebar.classList.remove('open');
-          if (backdrop) backdrop.style.display = 'none';
-        }
-      });
-    });
-    </script>
-    <!-- Player mini-card -->
-    <div style="margin:10px 10px 6px;background:linear-gradient(135deg,#1c2035,#252a3b);border:1px solid #333a50;border-radius:8px;padding:10px 12px;text-align:center">
-      <div style="width:36px;height:36px;background:linear-gradient(135deg,#f0a040,#e06010);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:1.1rem;font-weight:900;color:#fff;box-shadow:0 2px 8px rgba(240,160,64,0.4)">6</div>
-      <div style="font-size:0.78rem;font-weight:700;color:#d0d6e8">Suganth Sugumar</div>
-      <div style="font-size:0.63rem;color:#f0a040;margin-top:2px;font-weight:600">All Rounder</div>
-      <div style="display:flex;gap:4px;justify-content:center;margin-top:6px;flex-wrap:wrap">
-        <span style="font-size:0.56rem;color:#4cc9c0;border:1px solid #4cc9c0;border-radius:10px;padding:1px 6px">RHB</span>
-        <span style="font-size:0.56rem;color:#a855f7;border:1px solid #a855f7;border-radius:10px;padding:1px 6px">RA Med</span>
-      </div>
-    </div>
+    <!-- sidebar-backdrop moved below -->
+    <!-- Player mini-card and sidebar links go here (rest of sidebar content) -->
+    <!-- Player mini-card removed as requested -->
     <div class="sidebar-section">
       <a href="#" onclick="showTab('stats',this);return false;" style="margin:0 6px 8px;display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(240,160,64,0.1);border:1px solid rgba(240,160,64,0.3);border-radius:7px;color:#f0a040;font-size:0.78rem;font-weight:700;text-decoration:none" class="active">📋 Overall Stats</a>
     </div>
@@ -511,6 +484,8 @@ function showTab(name, linkEl) {
     </div>
   </nav>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
   <!-- ══ Main ══ -->
   <div class="main">
     <div class="content">
@@ -534,6 +509,60 @@ function showTab(name, linkEl) {
   </div>
 
 </div><!-- /shell -->
+
+<script>
+// Sidebar and header logic (runs after DOM is loaded)
+window.addEventListener('DOMContentLoaded', function() {
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburgerBtn');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if (hamburger && sidebar && backdrop) {
+    function openSidebar() {
+      sidebar.classList.add('open');
+      backdrop.style.display = 'block';
+      console.log('[DEBUG] Sidebar opened');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      backdrop.style.display = 'none';
+      console.log('[DEBUG] Sidebar closed');
+    }
+    hamburger.onclick = openSidebar;
+    hamburger.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') openSidebar(); };
+    backdrop.onclick = closeSidebar;
+    window.addEventListener('resize', () => { if (window.innerWidth > 900) closeSidebar(); });
+  }
+  // Hide header on scroll down, show on scroll up
+  let lastScroll = window.scrollY;
+  let ticking = false;
+  const header = document.getElementById('mainHeader');
+  window.addEventListener('scroll', () => {
+    if (!header) return;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const curr = window.scrollY;
+        if (curr > lastScroll && curr > 40) {
+          header.classList.add('hide');
+        } else {
+          header.classList.remove('hide');
+        }
+        lastScroll = curr;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+  // Mobile: Close sidebar after clicking a link
+  document.querySelectorAll('.sidebar a').forEach(link => {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900 && sidebar) {
+        sidebar.classList.remove('open');
+        if (backdrop) backdrop.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
 
 <script>
 /* ── Error trap (remove after debugging) ── */
