@@ -9,19 +9,28 @@
               margin: 0 0 16px 0 !important;
               box-sizing: border-box !important;
             }
-      .row, .row-2, .row-3 {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        grid-auto-flow: row !important;
-      }
-      .chart-card, .stat-card {
-        width: 100% !important;
-        min-width: 0 !important;
-        box-sizing: border-box !important;
-      }
-      .main, .content {
-        overflow-x: hidden !important;
-      }
+}
+
+/* --- MOBILE GRID OVERRIDES: Place at end for max effect --- */
+@media (max-width: 900px) {
+  .row, .row-2, .row-3, .stat-cards {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-auto-flow: row !important;
+    width: 100% !important;
+  }
+  .chart-card, .stat-card {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .main, .content {
+    overflow-x: hidden !important;
+  }
+}
       .row-3 { grid-template-columns: 1fr !important; }
       .shell { flex-direction: column; }
       .sidebar {
@@ -49,7 +58,7 @@
       .sidebar.open ~ .sidebar-backdrop { display: block; }
       .rightpane { display: none !important; }
       .main { min-width: 0; }
-    }
+    /* removed stray closing brace */
     @media (max-width: 700px) {
       .header { padding: 0 8px; min-height: 48px; }
       .header-jersey { width: 34px; height: 34px; }
@@ -706,7 +715,7 @@ function init(rawData) {
   document.getElementById('tab-overview').innerHTML = `
 
     <!-- ── STAT CARDS ── -->
-    <div id="statCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:10px;"></div>
+    <div id="statCards" class="stat-cards" style="margin-bottom:10px;"></div>
 
     <!-- ── FORM BANNER ── -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;
@@ -732,8 +741,7 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 1: Runs per Innings (full width) ── -->
-    <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;
-                padding:14px;margin-bottom:12px;">
+    <div class="chart-card" style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <span style="font-size:0.82rem;font-weight:600;color:#d0d6e8">Runs per Innings
           <small style="color:#7a8499;font-weight:400;margin-left:8px">
@@ -751,8 +759,8 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 2: Career Progression | Year-on-Year ── -->
-    <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;">
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+    <div class="row row-2" style="gap:12px;margin-bottom:12px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Career Progression
           <small style="color:#7a8499;font-weight:400;margin-left:6px">
@@ -761,7 +769,7 @@ function init(rawData) {
         </div>
         <div style="position:relative;height:230px"><canvas id="cCareer"></canvas></div>
       </div>
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Year-on-Year Improvement
           <small style="color:#7a8499;font-weight:400;display:block;margin-top:2px">avg per year (bars) + SR trend (line)</small>
@@ -771,19 +779,19 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 3: Dismissal | Score Bands | Recent Form ── -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+    <div class="row row-3" style="gap:12px;margin-bottom:12px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">Dismissal Analysis</div>
         <div id="cDismissalCard"></div>
       </div>
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:10px;">
           Score Distribution
           <small style="color:#7a8499;font-weight:400;margin-left:6px">bands + innings timeline</small>
         </div>
         <div id="cDistCard"></div>
       </div>
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Recent Form — Last 10 Innings
           <small style="color:#7a8499;font-weight:400;display:block;margin-top:2px">dashed = last-10 avg, solid = career avg</small>
@@ -793,12 +801,12 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 4: 1st vs 2nd | Year Runs Heat ── -->
-    <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;">
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+    <div class="row row-2" style="gap:12px;margin-bottom:12px;">
+      <div class="chart-card">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:10px;">1st vs 2nd Innings</div>
         <div id="cInningsCard"></div>
       </div>
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px 14px 0;">
+      <div class="chart-card" style="padding-bottom:0;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Year-by-Year Runs &amp; Innings Volume
           <small style="color:#7a8499;font-weight:400;margin-left:6px">total runs (bars) + innings count (line)</small>
