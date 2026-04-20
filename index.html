@@ -329,10 +329,8 @@
   </div>
   <div class="header-links">
     <a class="header-cc-link" href="https://cricclubs.com/CricketofSanAntonio/viewPlayer.do?playerId=3682166&amp;clubId=6845" target="_blank" rel="noopener">🌐 CricClubs Profile</a>
-    <label style="cursor:pointer;background:rgba(78,154,241,0.1);border:1px solid rgba(78,154,241,0.3);color:#4e9af1;padding:5px 12px;border-radius:6px;font-size:0.7rem;display:flex;align-items:center;gap:5px;white-space:nowrap">
-      📂 Load CSV <input type="file" id="csvFileInput" accept=".csv" style="display:none"/>
-    </label>
-    <button id="loadGoogleSheetBtn" style="background:rgba(76,201,192,0.1);border:1px solid #4cc9c0;color:#4cc9c0;padding:5px 12px;border-radius:6px;font-size:0.7rem;cursor:pointer;margin-left:6px">🔗 Load from Google Sheet</button>
+    <!-- Removed Load CSV button and file input -->
+    <!-- Removed Load from Google Sheet button -->
     <span id="loadStatus" style="font-size:0.7rem;color:#52c41a;white-space:nowrap"></span>
     <div class="header-meta" id="headerMeta">Loading…</div>
   </div>
@@ -3401,7 +3399,7 @@ function initRawData(rawData) {
     cols.forEach(([,lbl,align]) => {
       html += `<th style="text-align:${align}">${lbl}</th>`;
     });
-    html += '<th style="text-align:center">Edit</th>`;
+    html += '<th style="text-align:center">Edit</th>';
     html += '</tr></thead><tbody>';
     data.forEach((r, idx) => {
       const globalIdx = globalIndexes ? globalIndexes[idx] : idx;
@@ -3528,30 +3526,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-  // Manual reload button
-  const btn = document.getElementById('loadGoogleSheetBtn');
-  if (btn) {
-    btn.onclick = function() {
-      if (status) status.textContent = 'Loading from Google Sheet...';
-      fetch(GOOGLE_SHEET_CSV_URL)
-        .then(r => r.text())
-        .then(csv => {
-          loadFromCsvString(csv);
-          if (status) {
-            status.textContent = 'Loaded from Google Sheet!';
-            setTimeout(()=>status.textContent='', 2000);
-          }
-        })
-        .catch(e => {
-          if (status) {
-            status.textContent = 'Failed to load Google Sheet.';
-            setTimeout(()=>status.textContent='', 3000);
-          }
-        });
-    };
-  }
+  // Removed manual reload button logic for Google Sheet
 });
 // ...existing code...
 </script>
 </body>
 </html>
+i
