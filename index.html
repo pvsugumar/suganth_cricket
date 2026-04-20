@@ -465,6 +465,16 @@ function showTab(name, linkEl) {
         ticking = true;
       }
     });
+
+    // Mobile: Close sidebar after clicking a link
+    document.querySelectorAll('.sidebar a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 900 && sidebar) {
+          sidebar.classList.remove('open');
+          if (backdrop) backdrop.style.display = 'none';
+        }
+      });
+    });
     </script>
     <!-- Player mini-card -->
     <div style="margin:10px 10px 6px;background:linear-gradient(135deg,#1c2035,#252a3b);border:1px solid #333a50;border-radius:8px;padding:10px 12px;text-align:center">
