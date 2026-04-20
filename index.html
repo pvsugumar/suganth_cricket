@@ -432,8 +432,10 @@ function showTab(name, linkEl) {
   <!-- ══ Sidebar ══ -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    </div><!-- /shell -->
+
     <script>
-    // Mobile: Hamburger menu toggle
+    // Mobile: Hamburger menu toggle and sidebar logic (moved to end of body for DOM readiness)
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.getElementById('hamburgerBtn');
     const backdrop = document.getElementById('sidebarBackdrop');
@@ -465,7 +467,6 @@ function showTab(name, linkEl) {
         ticking = true;
       }
     });
-
     // Mobile: Close sidebar after clicking a link
     document.querySelectorAll('.sidebar a').forEach(link => {
       link.addEventListener('click', function() {
