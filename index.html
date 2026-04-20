@@ -1,64 +1,55 @@
 ﻿  <style>
     /* Responsive layout for mobile */
     @media (max-width: 900px) {
-            /* Ensure all chart cards stack vertically, one per row */
-            .chart-card {
-              display: block !important;
-              width: 100% !important;
-              min-width: 0 !important;
-              margin: 0 0 16px 0 !important;
-              box-sizing: border-box !important;
-            }
-}
-
-/* --- MOBILE GRID OVERRIDES: Place at end for max effect --- */
-@media (max-width: 900px) {
-  .row, .row-2, .row-3, .stat-cards {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    grid-auto-flow: row !important;
-    width: 100% !important;
-  }
-  .chart-card, .stat-card {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  .main, .content {
-    overflow-x: hidden !important;
-  }
-}
-      .row-3 { grid-template-columns: 1fr !important; }
-      .shell { flex-direction: column; }
+    /* Responsive layout for mobile */
+    @media (max-width: 900px) {
       .sidebar {
         position: fixed;
         max-width: 80vw;
-        background: #0f1220;
-        z-index: 1002;
+        left: 0;
+        top: 56px;
+        height: calc(100vh - 56px);
+        z-index: 1101;
         transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-        box-shadow: 2px 0 16px rgba(0,0,0,0.18);
-        border-right: 1px solid var(--border);
-        overflow-y: auto;
-        max-height: calc(100vh - 56px);
-        padding-top: 0;
-        box-sizing: border-box;
       }
-      .stat-cards { grid-template-columns: repeat(7, 1fr); }
-      .row-2, .row-3 { grid-template-columns: 1fr !important; }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-backdrop {
-        display: none;
-        position: fixed; z-index: 1001; left: 0; top: 0; width: 100vw; height: 100vh;
-        background: rgba(20,22,30,0.45);
+      .sidebar.open {
+        transform: translateX(0);
       }
+      .sidebar-backdrop { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(20,22,30,0.45); }
       .sidebar.open ~ .sidebar-backdrop { display: block; }
       .rightpane { display: none !important; }
       .main { min-width: 0; }
-    /* removed stray closing brace */
+    }
+    @media (max-width: 700px) {
+      .header { padding: 0 8px; min-height: 48px; }
+      .header-jersey { width: 34px; height: 34px; }
+      .header-name { font-size: 0.95rem; }
+      .header-links { gap: 6px; }
+      .header-cc-link { padding: 4px 8px; font-size: 0.65rem; }
+      .header-meta { display: none; }
+      .content { padding: 8px 4px; }
+    }
+    @media (max-width: 600px) {
+      /* 3 cards per row for stat cards on mobile */
+      .stat-cards,
+      [id^="statCards"] {
+        grid-template-columns: repeat(5, 1fr) !important;
+      }
+      .form-tables-row,
+      .row,
+      .row-2,
+      .row-3,
+      [id^="bowlCards"] {
+        grid-template-columns: 1fr !important;
+      }
+      .stat-card,
+      .chart-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+    }
     @media (max-width: 700px) {
       .header { padding: 0 8px; min-height: 48px; }
       .header-jersey { width: 34px; height: 34px; }
@@ -347,15 +338,9 @@
     /* ── Stat Cards ── */
     .stat-cards {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: repeat(14, 1fr);
+      gap: 6px;
       margin-bottom: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .stat-cards {
-        grid-template-columns: 1fr 1fr 1fr !important;
-      }
     }
     .stat-card {
       background: var(--card-bg);
@@ -721,7 +706,7 @@ function init(rawData) {
   document.getElementById('tab-overview').innerHTML = `
 
     <!-- ── STAT CARDS ── -->
-    <div id="statCards" class="stat-cards" style="margin-bottom:10px;"></div>
+    <div id="statCards" class="stat-cards"style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin-bottom:10px;"></div>
 
     <!-- ── FORM BANNER ── -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;
@@ -747,7 +732,8 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 1: Runs per Innings (full width) ── -->
-    <div class="chart-card" style="margin-bottom:12px;">
+    <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;
+                padding:14px;margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <span style="font-size:0.82rem;font-weight:600;color:#d0d6e8">Runs per Innings
           <small style="color:#7a8499;font-weight:400;margin-left:8px">
@@ -765,8 +751,8 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 2: Career Progression | Year-on-Year ── -->
-    <div class="row row-2" style="gap:12px;margin-bottom:12px;">
-      <div class="chart-card">
+    <div class="row-3" style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Career Progression
           <small style="color:#7a8499;font-weight:400;margin-left:6px">
@@ -775,7 +761,7 @@ function init(rawData) {
         </div>
         <div style="position:relative;height:230px"><canvas id="cCareer"></canvas></div>
       </div>
-      <div class="chart-card">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Year-on-Year Improvement
           <small style="color:#7a8499;font-weight:400;display:block;margin-top:2px">avg per year (bars) + SR trend (line)</small>
@@ -785,19 +771,19 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 3: Dismissal | Score Bands | Recent Form ── -->
-    <div class="row row-3" style="gap:12px;margin-bottom:12px;">
-      <div class="chart-card">
+    <div class="row-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">Dismissal Analysis</div>
         <div id="cDismissalCard"></div>
       </div>
-      <div class="chart-card">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:10px;">
           Score Distribution
           <small style="color:#7a8499;font-weight:400;margin-left:6px">bands + innings timeline</small>
         </div>
         <div id="cDistCard"></div>
       </div>
-      <div class="chart-card">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Recent Form — Last 10 Innings
           <small style="color:#7a8499;font-weight:400;display:block;margin-top:2px">dashed = last-10 avg, solid = career avg</small>
@@ -807,12 +793,12 @@ function init(rawData) {
     </div>
 
     <!-- ── ROW 4: 1st vs 2nd | Year Runs Heat ── -->
-    <div class="row row-2" style="gap:12px;margin-bottom:12px;">
-      <div class="chart-card">
+    <div class="row-3" style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:10px;">1st vs 2nd Innings</div>
         <div id="cInningsCard"></div>
       </div>
-      <div class="chart-card" style="padding-bottom:0;">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px 14px 0;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Year-by-Year Runs &amp; Innings Volume
           <small style="color:#7a8499;font-weight:400;margin-left:6px">total runs (bars) + innings count (line)</small>
@@ -1460,7 +1446,7 @@ function initPosition(rawData) {
   const container = document.getElementById('tab-position');
   container.innerHTML = `
     <!-- summary cards -->
-    <div class="stat-cards" style="margin-bottom:12px" id="posCards"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-bottom:12px" id="posCards"></div>
 
     <!-- banner: best role -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;
@@ -1474,7 +1460,7 @@ function initPosition(rawData) {
     </div>
 
     <!-- row 1: avg & SR by position -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="row-3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">Batting Average by Position</div>
         <div style="position:relative;height:230px"><canvas id="cPosAvg"></canvas></div>
@@ -1486,7 +1472,7 @@ function initPosition(rawData) {
     </div>
 
     <!-- row 2: runs & innings volume -->
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="row-3" style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Total Runs &amp; Innings Count per Position
@@ -1501,7 +1487,7 @@ function initPosition(rawData) {
     </div>
 
     <!-- row 3: score distribution per position (stacked %) -->
-    <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:12px;">
+    <div class="row-1" style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:12px;">
       <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px;">
         Score Band Distribution per Position
         <small style="color:#7a8499;font-weight:400;margin-left:6px">stacked % — how innings end</small>
@@ -1768,7 +1754,7 @@ function initLeague(rawData) {
   const container = document.getElementById('tab-league');
   container.innerHTML = `
     <!-- summary cards -->
-    <div class="stat-cards" style="margin-bottom:12px" id="lgCards"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-bottom:12px" id="lgCards"></div>
 
     <!-- banner -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;
@@ -1782,7 +1768,7 @@ function initLeague(rawData) {
     </div>
 
     <!-- row 1: avg + SR per tournament -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">Batting Average per Tournament</div>
         <div style="position:relative;height:260px"><canvas id="cLgAvg"></canvas></div>
@@ -1803,7 +1789,7 @@ function initLeague(rawData) {
     </div>
 
     <!-- row 3: Win/Loss avg split + 4s vs 6s -->
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="row-3" style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Batting Avg: Won vs Lost per Tournament
@@ -2178,8 +2164,8 @@ function initPhase(rawData) {
       <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">Batting Phase Analysis (Balls-Based)</div>
       <div style="font-size:0.75rem;color:#7a8499">Intent → Pressure → Release → Scoring Method → Failure Point</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRow1"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px" id="phRow2"></div>
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRow1"></div>
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px" id="phRow2"></div>
     <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
       <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">
         Balls Faced vs Runs Scored
@@ -2246,8 +2232,8 @@ function initPhase(rawData) {
         <div style="font-size:0.75rem;color:#7a8499">Opportunity → Efficiency → Depth → Reliability</div>
         <div style="font-size:0.7rem;color:#556;margin-top:3px">How often opportunities appear, how efficiently they're converted, how deep the innings run once set, and how reliable the output per dismissal is.</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow1"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow2"></div>
+      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow1"></div>
+      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow2"></div>
     </div>
   `);
 
@@ -2514,7 +2500,7 @@ function initConsistency(rawData) {
           ⚠ Youth Development Indicator<br>
           <span style="color:#7a8499;font-weight:400">Expect natural volatility – track trend over time</span>
         </div>
-        <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:0.68rem">
+        <div class="row" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:0.68rem">
           <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
             <div style="color:#7a8499">CV</div>
             <div style="color:#f0d060;font-weight:700">${cv}%</div>
@@ -2535,7 +2521,7 @@ function initConsistency(rawData) {
     </div>
 
     <!-- row 1: rolling avg chart + streak heatmap -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Rolling 10-Innings Avg &amp; Std Dev</div>
         <div style="font-size:0.7rem;color:#7a8499;margin-bottom:8px">Band width = ±1 std dev — wider band = more volatile innings</div>
@@ -2549,7 +2535,7 @@ function initConsistency(rawData) {
     </div>
 
     <!-- row 2: half-year CI trend + avg/SD by period -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Consistency Index by Period</div>
         <div style="font-size:0.7rem;color:#7a8499;margin-bottom:8px">% of innings ≥20 runs per half-year — target line at 40%</div>
@@ -2888,64 +2874,84 @@ function initStats(rawData) {
       );
 
   document.getElementById('tab-stats').innerHTML = `
+
     <!-- Form tables row -->
-    <div class="stat-cards" style="margin-bottom:14px">
-      <div class="stat-card">${card('Batting Form <span style=\"font-size:0.65rem;font-weight:400;color:#7a8499\">— last 10 innings</span>', '🏏', batFormTable)}</div>
-      <div class="stat-card">${card('Bowling Form <span style=\"font-size:0.65rem;font-weight:400;color:#7a8499\">— last 10 innings</span>', '🎳', bowlFormTable)}</div>
+    <div class="form-tables-row row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="stat-card">${card('Batting Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🏏', batFormTable)}</div>
+      <div class="stat-card">${card('Bowling Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🎳', bowlFormTable)}</div>
     </div>
 
-    <div class="stat-cards" style="margin-bottom:14px">
-      <div class="stat-card">${card('Batting — Core', '🏏', tbl([
-        statRow('Innings',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
-        statRow('Total Runs',   totalRuns,   ''),
-        statRow('Batting Avg',  batAvg,      dismissed ? `${totalRuns} runs / ${dismissed} dismissals` : ''),
-        statRow('Strike Rate',  batSR,       `${totalBalls} balls faced`),
-        statRow('High Score',   highScore,   ''),
-      ]))}</div>
-      <div class="stat-card">${card('Batting — Milestones', '🏆', tbl([
-        statRow('100s',   hundreds, ''),
-        statRow('50s',    fifties,  ''),
-        statRow('30s',    thirties, '(30–49)'),
-        statRow('Ducks',  ducks,    `${batInns ? (ducks/batInns*100).toFixed(1) : 0}% of innings`),
-      ]))}</div>
-      <div class="stat-card">${card('Batting — Shot Profile', '🎯', tbl([
-        statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs`),
-        statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs`),
-        statRow('Threes (3s)',    threes,   ''),
-        statRow('Twos (2s)',      twos,     ''),
-        statRow('Singles (1s)',   singles,  ''),
-        statRow('Dot Balls',      dotBalls, `${dotPct}% of balls`),
-        statRow('Boundary Runs',  boundaryRuns, `${boundaryPct}% of total runs`),
-      ]))}</div>
-      <div class="stat-card">${card('Bowling — Core', '🎳', bowlInns === 0
-        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
-        : tbl([
-          statRow('Innings Bowled', bowlInns,   ''),
-          statRow('Wickets',        totalWkts,  ''),
-          statRow('Overs',          totalOvers, `${totalBallsBowled} balls`),
-          statRow('Runs Conceded',  totalRuns2, ''),
-          statRow('Economy',        bEco,       'runs per over'),
-          statRow('Bowling Avg',    bAvg,       'runs per wicket'),
-          statRow('Bowling SR',     bSR,        'balls per wicket'),
-        ])
-      )}</div>
-      <div class="stat-card">${card('Bowling — Control', '🎯', bowlInns === 0
-        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
-        : tbl([
-          statRow('Maidens',      totalMaid,   `${maidenPct}% of overs`),
-          statRow('Dot Balls',    totalDots,   `${dotPctBowl}% of balls`),
-          statRow('Wides',        totalWides,  ''),
-          statRow('No Balls',     totalNoBl,   ''),
-        ])
-      )}</div>
-      <div class="stat-card">${card('Bowling — Wicket Hauls', '⭐', bowlInns === 0
-        ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
-        : tbl([
-          statRow('Best Figures',  bestFig,  ''),
-          statRow('3-Wkt Hauls',   haul3,    `${bowlInns ? (haul3/bowlInns*100).toFixed(1) : 0}% of innings`),
-          statRow('5-Wkt Hauls',   haul5,    `${bowlInns ? (haul5/bowlInns*100).toFixed(1) : 0}% of innings`),
-        ])
-      )}</div>
+    <style>
+    </style>
+
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+      <!-- BATTING -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        ${card('Batting — Core', '🏏', tbl([
+          statRow('Innings',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
+          statRow('Total Runs',   totalRuns,   ''),
+          statRow('Batting Avg',  batAvg,      dismissed ? `${totalRuns} runs / ${dismissed} dismissals` : ''),
+          statRow('Strike Rate',  batSR,       `${totalBalls} balls faced`),
+          statRow('High Score',   highScore,   ''),
+        ]))}
+
+        ${card('Batting — Milestones', '🏆', tbl([
+          statRow('100s',   hundreds, ''),
+          statRow('50s',    fifties,  ''),
+          statRow('30s',    thirties, '(30–49)'),
+          statRow('Ducks',  ducks,    `${batInns ? (ducks/batInns*100).toFixed(1) : 0}% of innings`),
+        ]))}
+
+        ${card('Batting — Shot Profile', '🎯', tbl([
+          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs`),
+          statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs`),
+          statRow('Threes (3s)',    threes,   ''),
+          statRow('Twos (2s)',      twos,     ''),
+          statRow('Singles (1s)',   singles,  ''),
+          statRow('Dot Balls',      dotBalls, `${dotPct}% of balls`),
+          statRow('Boundary Runs',  boundaryRuns, `${boundaryPct}% of total runs`),
+        ]))}
+
+      </div>
+
+      <!-- BOWLING -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        ${card('Bowling — Core', '🎳', bowlInns === 0
+          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
+          : tbl([
+            statRow('Innings Bowled', bowlInns,   ''),
+            statRow('Wickets',        totalWkts,  ''),
+            statRow('Overs',          totalOvers, `${totalBallsBowled} balls`),
+            statRow('Runs Conceded',  totalRuns2, ''),
+            statRow('Economy',        bEco,       'runs per over'),
+            statRow('Bowling Avg',    bAvg,       'runs per wicket'),
+            statRow('Bowling SR',     bSR,        'balls per wicket'),
+          ])
+        )}
+
+        ${card('Bowling — Control', '🎯', bowlInns === 0
+          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
+          : tbl([
+            statRow('Maidens',      totalMaid,   `${maidenPct}% of overs`),
+            statRow('Dot Balls',    totalDots,   `${dotPctBowl}% of balls`),
+            statRow('Wides',        totalWides,  ''),
+            statRow('No Balls',     totalNoBl,   ''),
+          ])
+        )}
+
+        ${card('Bowling — Wicket Hauls', '⭐', bowlInns === 0
+          ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
+          : tbl([
+            statRow('Best Figures',  bestFig,  ''),
+            statRow('3-Wkt Hauls',   haul3,    `${bowlInns ? (haul3/bowlInns*100).toFixed(1) : 0}% of innings`),
+            statRow('5-Wkt Hauls',   haul5,    `${bowlInns ? (haul5/bowlInns*100).toFixed(1) : 0}% of innings`),
+          ])
+        )}
+
+      </div>
     </div>
   `;
 }
@@ -2978,7 +2984,7 @@ function bowlSR(rows) {
 function initBowlOverview(rawData) {
   const rows = bowlingRows(rawData);
   document.getElementById('tab-bowl-overview').innerHTML = `
-    <div class="stat-cards" style="margin-bottom:14px" id="bowlCards"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:14px" id="bowlCards"></div>
     <!-- Wicket hauls row -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:12px 16px;margin-bottom:14px">
       <div style="font-size:0.78rem;font-weight:700;color:#d0d6e8;margin-bottom:10px;display:flex;align-items:center;gap:6px">
@@ -3191,7 +3197,7 @@ function initBowlLeague(rawData) {
       <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">🎳 Bowling by League</div>
       <div style="font-size:0.75rem;color:#7a8499">Economy &amp; wickets per tournament</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Economy by League</div>
         <div style="position:relative;height:280px"><canvas id="cBowlLgEco"></canvas></div>
@@ -3245,7 +3251,7 @@ function initBowlPhase(rawData) {
       <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">🎳 Bowling Phase Analysis</div>
       <div style="font-size:0.75rem;color:#7a8499">Economy &amp; wickets trend by half-year</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Economy Trend by Period</div>
         <div style="position:relative;height:260px"><canvas id="cBowlPhEco"></canvas></div>
