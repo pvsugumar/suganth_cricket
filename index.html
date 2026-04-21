@@ -471,7 +471,7 @@ function showTab(name, linkEl) {
     <div class="jlbl">Jersey</div>
   </div>
   <div class="header-info">
-    <div class="header-name">🏏 <span class="accent">Suganth Sugumar</span></div>
+    <div class="header-name"><span class="accent">Suganth Sugumar</span></div>
     <div class="header-sub">
       All Rounder
       <span class="sep">|</span>Right Handed Batter
@@ -2519,47 +2519,86 @@ function initConsistency(rawData) {
       <div style="font-size:0.75rem;color:#7a8499">Rolling form · Streaks · Scoring distribution · Consistency Meter</div>
     </div>
 
-    <!-- meter + stat cards row -->
-    <div style="margin-bottom:12px;align-items:start">
-      <!-- meter -->
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:18px;text-align:center;margin-bottom:12px">
-        <div style="font-size:0.78rem;font-weight:600;color:#7a8499;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Consistency Meter</div>
-        <div style="position:relative;display:inline-block;width:170px;height:170px" id="cmeterWrap">
-          <canvas id="cMeter" width="170" height="170"></canvas>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-45%)">
-            <div style="font-size:2rem;font-weight:800;color:${meterColor};line-height:1">${meterScore}</div>
-            <div style="font-size:0.72rem;font-weight:600;color:${meterColor};margin-top:2px">${meterLabel}</div>
+    <!-- meter + stat cards row (responsive) -->
+    <div class="con-metrics-row">
+      <div class="con-meter-col">
+        <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:18px;text-align:center;margin-bottom:12px">
+          <div style="font-size:0.78rem;font-weight:600;color:#7a8499;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Consistency Meter</div>
+          <div style="position:relative;display:inline-block;width:170px;height:170px" id="cmeterWrap">
+            <canvas id="cMeter" width="170" height="170"></canvas>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-45%)">
+              <div style="font-size:2rem;font-weight:800;color:${meterColor};line-height:1">${meterScore}</div>
+              <div style="font-size:0.72rem;font-weight:600;color:${meterColor};margin-top:2px">${meterLabel}</div>
+            </div>
           </div>
+          <div style="margin-top:6px;font-size:0.72rem;color:#f5c842;font-weight:600;line-height:1.4">
+            ⚠ Youth Development Indicator<br>
+            <span style="color:#7a8499;font-weight:400">Expect natural volatility – track trend over time</span>
+          </div>
+          <div class="row" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:0.68rem">
+            <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
+              <div style="color:#7a8499">CV</div>
+              <div style="color:#f0d060;font-weight:700">${cv}%</div>
+            </div>
+            <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
+              <div style="color:#7a8499">CI (≥20)</div>
+              <div style="color:#52c41a;font-weight:700">${CI}%</div>
+            </div>
+            <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
+              <div style="color:#7a8499">Duck%</div>
+              <div style="color:#ff6b6b;font-weight:700">${duckPct}%</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:0.68rem;color:#444;line-height:1.5">Score = CV×0.4 + CI×0.4 + DuckScore×0.2</div>
         </div>
-        <div style="margin-top:6px;font-size:0.72rem;color:#f5c842;font-weight:600;line-height:1.4">
-          ⚠ Youth Development Indicator<br>
-          <span style="color:#7a8499;font-weight:400">Expect natural volatility – track trend over time</span>
-        </div>
-        <div class="row" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:0.68rem">
-          <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
-            <div style="color:#7a8499">CV</div>
-            <div style="color:#f0d060;font-weight:700">${cv}%</div>
-          </div>
-          <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
-            <div style="color:#7a8499">CI (≥20)</div>
-            <div style="color:#52c41a;font-weight:700">${CI}%</div>
-          </div>
-          <div style="background:#1e2235;border-radius:4px;padding:5px 3px;text-align:center">
-            <div style="color:#7a8499">Duck%</div>
-            <div style="color:#ff6b6b;font-weight:700">${duckPct}%</div>
-          </div>
-        </div>
-        <div style="margin-top:8px;font-size:0.68rem;color:#444;line-height:1.5">Score = CV×0.4 + CI×0.4 + DuckScore×0.2</div>
       </div>
-      <!-- stat cards grid -->
-      <div id="conCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
+      <div class="con-cards-col">
+        <div id="conCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
+      </div>
     </div>
     <style>
-      @media (min-width: 701px) {
-        #conCards { grid-template-columns: repeat(auto-fill,minmax(120px,1fr)) !important; }
+      .con-metrics-row {
+        display: flex;
+        flex-direction: row;
+        gap: 18px;
+        align-items: stretch;
+        margin-bottom: 12px;
+      }
+      .con-meter-col {
+        flex: 0 0 260px;
+        max-width: 260px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .con-cards-col {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
       @media (max-width: 700px) {
-        #conCards { grid-template-columns: repeat(3,1fr) !important; }
+        .con-metrics-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .con-meter-col {
+          max-width: 100%;
+          width: 100%;
+          margin-bottom: 10px;
+        }
+        .con-cards-col {
+          width: 100%;
+        }
+        #conCards {
+          grid-template-columns: repeat(3,1fr) !important;
+        }
+      }
+      @media (min-width: 701px) {
+        #conCards { grid-template-columns: repeat(auto-fill,minmax(120px,1fr)) !important; }
       }
     </style>
 
@@ -3027,7 +3066,14 @@ function bowlSR(rows) {
 function initBowlOverview(rawData) {
   const rows = bowlingRows(rawData);
   document.getElementById('tab-bowl-overview').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:14px" id="bowlCards"></div>
+    <div id="bowlCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:14px"></div>
+    <style>
+      @media (max-width: 700px) {
+        #bowlCards {
+          grid-template-columns: repeat(3, 1fr) !important;
+        }
+      }
+    </style>
     <!-- Wicket hauls row -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:12px 16px;margin-bottom:14px">
       <div style="font-size:0.78rem;font-weight:700;color:#d0d6e8;margin-bottom:10px;display:flex;align-items:center;gap:6px">
@@ -3036,18 +3082,17 @@ function initBowlOverview(rawData) {
       </div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px" id="bowlHauls"></div>
     </div>
-    <!-- row 1: wickets timeline + haul donut -->
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px">
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
-        <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Wickets per Innings</div>
-        <div style="position:relative;height:200px"><canvas id="cBowlWkts"></canvas></div>
-      </div>
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
-        <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Haul Distribution</div>
-        <div style="position:relative;height:200px"><canvas id="cBowlHaulDonut"></canvas></div>
-      </div>
+    <!-- row 1: wickets timeline -->
+    <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Wickets per Innings</div>
+      <div style="position:relative;height:200px"><canvas id="cBowlWkts"></canvas></div>
     </div>
-    <!-- row 2: economy timeline -->
+    <!-- row 2: haul donut -->
+    <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Haul Distribution</div>
+      <div style="position:relative;height:200px"><canvas id="cBowlHaulDonut"></canvas></div>
+    </div>
+    <!-- row 3: economy timeline -->
     <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
         <span style="font-size:0.82rem;font-weight:600;color:#d0d6e8">Economy per Innings
@@ -3056,7 +3101,7 @@ function initBowlOverview(rawData) {
       </div>
       <div style="position:relative;height:180px"><canvas id="cBowlEcoTimeline"></canvas></div>
     </div>
-    <!-- row 3: bowling form last 10 -->
+    <!-- row 4: bowling form last 10 -->
     <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
       <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">Bowling Form — Last 10 Innings
         <small style="color:#7a8499;font-weight:400;margin-left:8px">bars = wickets &nbsp;·&nbsp; line = economy</small>
