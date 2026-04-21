@@ -22,13 +22,49 @@
       .main { min-width: 0; }
     }
     @media (max-width: 700px) {
-      .header { padding: 0 8px; min-height: 48px; }
-      .header-jersey { width: 34px; height: 34px; }
-      .header-name { font-size: 0.95rem; }
-      .header-links { gap: 6px; }
-      .header-cc-link { padding: 4px 8px; font-size: 0.65rem; }
-      .header-meta { display: none; }
-      .content { padding: 8px 4px; }
+      .header {
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 2px 2px 2px;
+        min-height: 28px;
+        justify-content: flex-start;
+      }
+      .header-jersey {
+        width: 20px;
+        height: 20px;
+        margin-bottom: 0;
+      }
+      .header-info {
+        text-align: left;
+        width: auto;
+        flex: 1;
+      }
+      .header-name {
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+      .header-sub {
+        display: none;
+      }
+      .header-links {
+        display: none;
+      }
+      .header-cc-link {
+        display: none;
+      }
+      .header-meta {
+        display: none;
+      }
+      .content {
+        padding: 4px 2px;
+      }
+      .hamburger {
+        align-self: center;
+        margin-bottom: 0;
+        width: 20px;
+        height: 20px;
+      }
     }
     @media (max-width: 600px) {
       /* 3 cards per row for stat cards on mobile */
@@ -448,7 +484,7 @@ function showTab(name, linkEl) {
       </a>
     <!-- Removed Load CSV button and file input -->
     <!-- Removed Load from Google Sheet button -->
-    <span id="loadStatus" style="font-size:0.7rem;color:#52c41a;white-space:nowrap"></span>
+    <!-- Toast will be injected at the end of body -->
     <div class="header-meta" id="headerMeta">Loading…</div>
   </div>
 </div>
@@ -1788,8 +1824,7 @@ function initLeague(rawData) {
       <div style="position:relative;height:320px"><canvas id="cLgVol"></canvas></div>
     </div>
 
-    <!-- row 3: Win/Loss avg split + 4s vs 6s -->
-    <div class="row-3" style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
+       <div class="row-3" style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
       <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
         <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
           Batting Avg: Won vs Lost per Tournament
@@ -2485,9 +2520,9 @@ function initConsistency(rawData) {
     </div>
 
     <!-- meter + stat cards row -->
-    <div style="display:grid;grid-template-columns:280px 1fr;gap:12px;margin-bottom:12px;align-items:start">
+    <div style="margin-bottom:12px;align-items:start">
       <!-- meter -->
-      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:18px;text-align:center">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:18px;text-align:center;margin-bottom:12px">
         <div style="font-size:0.78rem;font-weight:600;color:#7a8499;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Consistency Meter</div>
         <div style="position:relative;display:inline-block;width:170px;height:170px" id="cmeterWrap">
           <canvas id="cMeter" width="170" height="170"></canvas>
@@ -2517,8 +2552,16 @@ function initConsistency(rawData) {
         <div style="margin-top:8px;font-size:0.68rem;color:#444;line-height:1.5">Score = CV×0.4 + CI×0.4 + DuckScore×0.2</div>
       </div>
       <!-- stat cards grid -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px" id="conCards"></div>
+      <div id="conCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
     </div>
+    <style>
+      @media (min-width: 701px) {
+        #conCards { grid-template-columns: repeat(auto-fill,minmax(120px,1fr)) !important; }
+      }
+      @media (max-width: 700px) {
+        #conCards { grid-template-columns: repeat(3,1fr) !important; }
+      }
+    </style>
 
     <!-- row 1: rolling avg chart + streak heatmap -->
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -3649,30 +3692,37 @@ function initRawData(rawData) {
 // Google Sheet CSV URL (read-only)
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-lYMCm_Jo7NbBX_o17jt5mhN7w4hqm7q0moqI7kTCkJ5XBjtqTv0MKAzz4lxy8D0Ll4CoqLZqXw21/pub?gid=821921335&single=true&output=csv';
 
+// Toast Notification
+function showToast(message, duration = 2000) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateY(0)';
+  clearTimeout(window._toastTimeout);
+  window._toastTimeout = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-20px)';
+  }, duration);
+}
+
 // Add Google Sheet loader
 document.addEventListener('DOMContentLoaded', function() {
-  // Auto-load Google Sheet on page load
-  const status = document.getElementById('loadStatus');
-  if (status) status.textContent = 'Loading from Google Sheet...';
+  showToast('Loading from Google Sheet...', 1500);
   fetch(GOOGLE_SHEET_CSV_URL)
     .then(r => r.text())
     .then(csv => {
       loadFromCsvString(csv);
-      if (status) {
-        status.textContent = 'Loaded from Google Sheet!';
-        setTimeout(()=>status.textContent='', 2000);
-      }
+      showToast('Loaded from Google Sheet!', 2000);
     })
     .catch(e => {
-      if (status) {
-        status.textContent = 'Failed to load Google Sheet.';
-        setTimeout(()=>status.textContent='', 3000);
-      }
+      showToast('Failed to load Google Sheet.', 3000);
     });
-
-  // Removed manual reload button logic for Google Sheet
 });
 // ...existing code...
 </script>
+
+<!-- Toast Notification -->
+<div id="toast" style="position:fixed;top:24px;right:24px;z-index:9999;min-width:180px;max-width:90vw;padding:12px 20px;background:#222a3a;color:#f0a040;font-weight:600;font-size:1rem;border-radius:8px;box-shadow:0 2px 12px #0008;opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.3s;transform:translateY(-20px);"></div>
 </body>
 </html>
