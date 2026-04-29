@@ -2084,21 +2084,14 @@ function initPhase(rawData) {
   }
 
   /* ── heatmap cell color ── */
-  function heatBg(v, lo, hi, invert=false) {
+  function heatBg(v, lo, hi, invert = false) {
     if (v === null) return '#1a1d2e';
     let t = hi > lo ? Math.max(0, Math.min(1, (v - lo) / (hi - lo))) : 0.5;
     if (invert) t = 1 - t;
-    let r, g, b;
-    if (t < 0.5) {
-      // red → yellow
-      const s = t / 0.5;
-      r = 210; g = Math.round(50 + s * 140); b = 30;
-    } else {
-      // yellow → dark green
-      const s = (t - 0.5) / 0.5;
-      r = Math.round(210 - s * 158); g = Math.round(190 + s * 10); b = Math.round(30 - s * 10);
-    }
-    return `rgba(${r},${g},${b},0.82)`;
+    // Discrete: red (bad), orange (mid), green (good)
+    if (t < 0.33) return 'rgba(231,76,60,0.82)';    // Red
+    if (t < 0.66) return 'rgba(240,160,64,0.82)';   // Orange
+    return 'rgba(39,174,96,0.82)';                  // Green
   }
 
   /* ── build metric matrix + range ── */
@@ -2113,29 +2106,154 @@ function initPhase(rawData) {
   /* ── generic heatmap table ── */
   function makeHeatTable(title, caption, unit, matrix, lo, hi, invert=false) {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
-    const headCols = PHASES.map(ph => `<th style="${TH}">${ph.lbl}</th>`).join('');
+    // Set green threshold for each phase (customize as needed)
+    // Add SR range label for Strike Rate table
+    let srRanges = ["60–80", "75–95", "85–120+"];
+    let srNotes = [
+      "Settling with purpose, avoiding paralysis or reckless start",
+      "Intent converted via rotation + selective boundaries",
+      "Accelerated intent, fitness & bat-speed dependent"
+    ];
+    let headCols;
+    if (title.startsWith('Strike Rate')) {
+      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${srRanges[idx]}</span></th>`).join('');
+    } else if (title.startsWith('Dot Ball %')) {
+      let dotRanges = ["≤ 40%", "≤ 50%", "≤ 60%"];
+      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${dotRanges[idx]}</span></th>`).join('');
+    } else if (title.startsWith('Rotation Rate')) {
+      let rotRanges = ["≥ 60%", "≥ 50%", "≥ 40%"];
+      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${rotRanges[idx]}</span></th>`).join('');
+    } else if (title.startsWith('Boundary Dependency')) {
+      let bndRanges = ["≤ 35%", "≤ 45%", "≤ 55%"];
+      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${bndRanges[idx]}</span></th>`).join('');
+    } else {
+      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}</th>`).join('');
+    }
+    let showLegend = false;
+    let customCaption = caption;
+    // Use cricket cutoffs for color, not relative scaling
+    let colorFn = (v, idx) => {
+      if (v === null) return '#1a1d2e';
+      // Opportunity → Starts & Big‑Score Frequency
+      if (title.startsWith('Opportunity')) {
+        // idx: 0 = ≥20 Runs %, 1 = ≥30 Runs %, 2 = ≥50 Runs %, 3 = ≥100 Runs %
+        if (idx === 0) {
+          // ≥20 Runs %: green ≥50, orange 35–49, red <35
+          if (v >= 50) return 'rgba(39,174,96,0.82)';
+          if (v >= 35) return 'rgba(240,160,64,0.82)';
+          return 'rgba(231,76,60,0.82)';
+        }
+        if (idx === 1) {
+          // ≥30 Runs %: green ≥35, orange 20–34, red <20
+          if (v >= 35) return 'rgba(39,174,96,0.82)';
+          if (v >= 20) return 'rgba(240,160,64,0.82)';
+          return 'rgba(231,76,60,0.82)';
+        }
+        if (idx === 2) {
+          // ≥50 Runs %: green ≥20, orange 10–19, red <10
+          if (v >= 20) return 'rgba(39,174,96,0.82)';
+          if (v >= 10) return 'rgba(240,160,64,0.82)';
+          return 'rgba(231,76,60,0.82)';
+        }
+        if (idx === 3) {
+          // ≥100 Runs %: green ≥5, orange 1–4, red 0
+          if (v >= 5) return 'rgba(39,174,96,0.82)';
+          if (v >= 1) return 'rgba(240,160,64,0.82)';
+          return 'rgba(231,76,60,0.82)';
+        }
+      }
+      // Strike Rate
+      if (title.startsWith('Strike Rate')) {
+        // Early: 60–80, Middle: 75–95, Late: 85–120+
+        const cut = [60, 80, 85, 95, 120];
+        if (idx === 0) return v < 60 ? 'rgba(231,76,60,0.82)' : v <= 80 ? 'rgba(240,160,64,0.82)' : 'rgba(39,174,96,0.82)';
+        if (idx === 1) return v < 75 ? 'rgba(231,76,60,0.82)' : v <= 95 ? 'rgba(240,160,64,0.82)' : 'rgba(39,174,96,0.82)';
+        if (idx === 2) return v < 85 ? 'rgba(231,76,60,0.82)' : v <= 120 ? 'rgba(240,160,64,0.82)' : 'rgba(39,174,96,0.82)';
+      }
+      // Dot Ball % (lower is better)
+      if (title.startsWith('Dot Ball %')) {
+        // Early: ≤40 green, ≤50 orange, >50 red
+        if (idx === 0) return v <= 40 ? 'rgba(39,174,96,0.82)' : v <= 50 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        // Middle: ≤50 green, ≤60 orange, >60 red
+        if (idx === 1) return v <= 50 ? 'rgba(39,174,96,0.82)' : v <= 60 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        // Late: ≤60 green, ≤70 orange, >70 red (if you want to extend, but legend only shows ≤60)
+        if (idx === 2) return v <= 60 ? 'rgba(39,174,96,0.82)' : v <= 70 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+      }
+      // Rotation Rate (higher is better)
+      if (title.startsWith('Rotation Rate')) {
+        // Early: ≥60 green, ≥50 orange, <50 red
+        // Middle: ≥50 green, ≥40 orange, <40 red
+        // Late: ≥40 green, ≥30 orange, <30 red
+        if (idx === 0) return v >= 60 ? 'rgba(39,174,96,0.82)' : v >= 50 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        if (idx === 1) return v >= 50 ? 'rgba(39,174,96,0.82)' : v >= 40 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        if (idx === 2) return v >= 40 ? 'rgba(39,174,96,0.82)' : v >= 30 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+      }
+      // Boundary Dependency (lower is better)
+      if (title.startsWith('Boundary Dependency')) {
+        // Early: ≤35% green, ≤45% orange, >45% red
+        // Middle: ≤45% green, ≤55% orange, >55% red
+        // Late: ≤55% green, ≤65% orange, >65% red
+        if (idx === 0) return v <= 35 ? 'rgba(39,174,96,0.82)' : v <= 45 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        if (idx === 1) return v <= 45 ? 'rgba(39,174,96,0.82)' : v <= 55 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        if (idx === 2) return v <= 55 ? 'rgba(39,174,96,0.82)' : v <= 65 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+      }
+      // Fallback: relative scaling
+      return heatBg(v, lo, hi, invert);
+    };
+    if (title.startsWith('Dot Ball %')) {
+      showLegend = false;
+      customCaption = 'Non-scoring balls by batting phase. Lower values indicate better strike rotation and pressure management.';
+    }
     const rows = halfYears.map((h, yIdx) => {
       const cells = PHASES.map((_, pIdx) => {
         const v   = matrix[yIdx][pIdx];
         const txt = v === null ? '-' : (v + unit);
-        const bg  = heatBg(v, lo, hi, invert);
+        const bg  = colorFn(v, pIdx);
         return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600;border-bottom:1px solid #1a1d2e">${txt}</td>`;
       }).join('');
       return `<tr><td style="padding:6px 12px;color:#d0d6e8;border-bottom:1px solid #1a1d2e;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
     }).join('');
     const shortTitle = title.replace(/ \(.*$/, '');
+    let legend = '';
+    if (title.startsWith('Strike Rate')) {
+      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
+        <span style='display:block'><b>60–80</b> → Settling with purpose, avoiding paralysis or reckless start</span>
+        <span style='display:block'><b>75–95</b> → Intent converted via rotation + selective boundaries</span>
+        <span style='display:block'><b>85–120+</b> → Accelerated intent, fitness & bat-speed dependent</span>
+      </div>`;
+    } else if (title.startsWith('Dot Ball %')) {
+      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
+        <span style='display:block'><b>≤ 40%</b> → Limited tolerance for pressure; early freeze is dangerous</span>
+        <span style='display:block'><b>≤ 50%</b> → Pressure acceptable but must be managed</span>
+        <span style='display:block'><b>≤ 60%</b> → Tactical dots allowed for boundary setup</span>
+      </div>`;
+    } else if (title.startsWith('Rotation Rate')) {
+      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
+        <span style='display:block'><b>≥ 60%</b> → Soft hands, awareness, strike rotation</span>
+        <span style='display:block'><b>≥ 50%</b> → Key indicator of batting IQ</span>
+        <span style='display:block'><b>≥ 40%</b> → Fitness + late-innings awareness</span>
+      </div>`;
+    } else if (title.startsWith('Boundary Dependency')) {
+      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
+        <span style='display:block'><b>≤ 35%</b> → Technique-driven scoring</span>
+        <span style='display:block'><b>≤ 45%</b> → Balanced method</span>
+        <span style='display:block'><b>≤ 55%</b> → Boundary plays a larger but controlled role</span>
+        <span style='display:block;color:#f0a040;margin-top:4px'><span style='font-size:1.1em;vertical-align:-2px'>⚠️</span> Early or middle dependency &gt; 50% = fragile profile at higher levels</span>
+      </div>`;
+    }
     return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
       <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">${title}</div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead>
-            <tr><th colspan="${PHASES.length+1}" style="padding:3px 14px;text-align:right;color:#444;font-size:0.69rem;font-weight:500;border-bottom:1px solid #2a2f44">Batting Phase / ${shortTitle}</th></tr>
+            <tr><th colspan="${PHASES.length+1}" style="padding:3px 14px;text-align:right;color:#444;font-size:0.69rem;font-weight:500;border-bottom:1px solid #2a2f44"></th></tr>
             <tr><th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>${headCols}</tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">${caption}</div>
+      <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">${customCaption}</div>
+      ${legend}
     </div>`;
   }
 
@@ -2156,18 +2274,36 @@ function initPhase(rawData) {
 
   function makeDisTable() {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
-    const headCols = PHASES.map(ph=>`<th style="${TH}">${ph.lbl}</th>`).join('');
+    // Add phase cutoff labels for %
+    const phaseCutoffs = [
+      '≤ 35%',
+      '≤ 30%',
+      '≤ 20%'
+    ];
+    const headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${phaseCutoffs[idx]}</span></th>`).join('');
     const rows = halfYears.map((h, yIdx) => {
       const cells = PHASES.map((_,pIdx) => {
         const c   = disMat[yIdx][pIdx];
         const txt = c === null ? '-' : `${c.d} (${c.p}%)`;
-        const bg  = c === null ? '#1a1d2e' : heatBg(c.p, disLo, disHi, true);
+        let bg = '#1a1d2e';
+        if (c !== null) {
+          // Dismissals % cutoffs: Early ≤35% green, ≤40% orange, >40% red; Middle ≤30% green, ≤35% orange, >35% red; Late ≤20% green, ≤25% orange, >25% red
+          if (pIdx === 0)      bg = c.p <= 35 ? 'rgba(39,174,96,0.82)' : c.p <= 40 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+          else if (pIdx === 1) bg = c.p <= 30 ? 'rgba(39,174,96,0.82)' : c.p <= 35 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+          else if (pIdx === 2) bg = c.p <= 20 ? 'rgba(39,174,96,0.82)' : c.p <= 25 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        }
         return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600;border-bottom:1px solid #1a1d2e">${txt}</td>`;
       }).join('');
       return `<tr><td style="padding:6px 12px;color:#d0d6e8;border-bottom:1px solid #1a1d2e;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
     }).join('');
+    // Legend for Dismissals %
+    const legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
+      <span style='display:block'><b>≤ 35%</b> → Should survive the settling phase</span>
+      <span style='display:block'><b>≤ 30%</b> → Set batters shouldn’t donate wickets</span>
+      <span style='display:block'><b>≤ 20%</b> → Risk acceptable only after value added</span>
+    </div>`;
     return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
-      <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Dismissals (n, %) (Failure Point) - Where innings end...</div>
+      <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Dismissals — Failure Point by Batting Phase</div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead>
@@ -2178,6 +2314,7 @@ function initPhase(rawData) {
         </table>
       </div>
       <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">Dismissed innings per phase as count and % of total innings for that period<br>→ In which phase does the innings most frequently end?</div>
+      ${legend}
     </div>`;
   }
 
@@ -2197,7 +2334,7 @@ function initPhase(rawData) {
   document.getElementById('tab-phase').innerHTML = `
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;margin-bottom:14px;text-align:center">
       <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">Batting Phase Analysis (Balls-Based)</div>
-      <div style="font-size:0.75rem;color:#7a8499">Intent → Pressure → Release → Scoring Method → Failure Point</div>
+      <div style="font-size:0.75rem;color:#7a8499">Intent → Pressure Accumulation → Pressure Release → Scoring Method → Failure Point</div>
     </div>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRow1"></div>
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px" id="phRow2"></div>
@@ -2211,21 +2348,21 @@ function initPhase(rawData) {
   `;
 
   document.getElementById('phRow1').innerHTML =
-    makeHeatTable('Dot Ball % (How pressure builds?)',
-      'Non-scoring balls by batting phase\n→ Where is pressure absorbed or released?',
-      '%', matDot.m, matDot.lo, matDot.hi, true) +
-    makeHeatTable('Strike Rate (How scoring intent changes?)',
+    makeHeatTable('Strike Rate — Scoring Intent by Phase',
       'Scoring speed in Early, Middle, and Late phases\n→ How fast are runs scored in each phase?',
-      '%', matSR.m, matSR.lo, matSR.hi);
+      '%', matSR.m, matSR.lo, matSR.hi) +
+    makeHeatTable('Dot Ball % — Pressure Accumulation (on Batter)',
+      'Non-scoring balls by batting phase. Lower values indicate better strike rotation and pressure management.',
+      '%', matDot.m, matDot.lo, matDot.hi, true);
 
   document.getElementById('phRow2').innerHTML =
-    makeDisTable() +
-    makeHeatTable('Rotation Rate (How pressure is released?)',
+    makeHeatTable('Rotation Rate — Pressure Release Efficiency',
       'Singles + doubles as % of balls faced\n→ Are pressure balls rotated or held back?',
       '%', matRot.m, matRot.lo, matRot.hi) +
-    makeHeatTable('Boundary Dependency % (How scoring method changes?)',
+    makeHeatTable('Boundary Dependency % — Scoring Method Mix',
       'Boundary runs as % of total runs per phase\n→ How reliant on boundaries vs. rotation?',
-      '%', matBnd.m, matBnd.lo, matBnd.hi);
+      '%', matBnd.m, matBnd.lo, matBnd.hi) +
+    makeDisTable();
 
   /* ── scatter chart ── */
   new Chart(document.getElementById('cPhScatter'), {
@@ -2275,7 +2412,14 @@ function initPhase(rawData) {
   /* ── generic custom table builder ── */
   function makeCustomTable(title, caption, colHeaders, getRow, getColor) {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
-    const headCols = colHeaders.map(h => `<th style="${TH}">${h}</th>`).join('');
+    let headCols;
+    if (title.startsWith('Opportunity')) {
+      // Add green cutoff values to column headers
+      const greenCutoffs = ['≥ 50%', '≥ 35%', '≥ 20%', '≥ 5%'];
+      headCols = colHeaders.map((h, i) => `<th style="${TH}">${h}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${greenCutoffs[i] || ''}</span></th>`).join('');
+    } else {
+      headCols = colHeaders.map(h => `<th style="${TH}">${h}</th>`).join('');
+    }
     const bodyRows = halfYears.map((h, yi) => {
       const cells = getRow(yi).map((txt, ci) => {
         const bg = getColor(yi, ci);
@@ -2364,29 +2508,9 @@ function initPhase(rawData) {
   const depRa50Lo = depRa50Vals.length ? Math.min(...depRa50Vals) : 0;
   const depRa50Hi = depRa50Vals.length ? Math.max(...depRa50Vals) : 1;
 
-  /* ── Render Row 1: Efficiency + Reliability ── */
-  document.getElementById('phRbRow1').innerHTML =
-    makeCustomTable(
-      'Efficiency → Batting Score Conversion (%)',
-      'Where innings end\n→ Where do innings actually end?',
-      EFF_COLS.map(c => c.lbl),
-      yi => effMat[yi].map(v => v === null ? '-' : v + '%'),
-      (yi, ci) => heatBg(effMat[yi][ci], effLo, effHi)
-    ) +
-    makeCustomTable(
-      'Reliability → Batting Average & Not-Out %',
-      'Average, not-out rate and retired-hurt rate per period',
-      ['Batting Avg', 'Not Out %', 'Retired Hurt %'],
-      yi => [relRows[yi].avg, relRows[yi].no + '%', relRows[yi].rh + '%'],
-      (yi, ci) => {
-        if (ci === 0) return heatBg(relRows[yi].avg, relAvgLo, relAvgHi);
-        if (ci === 1) return heatBg(relRows[yi].no,  0, relNoHi || 1);
-        return '#1a1d2e';
-      }
-    );
 
-  /* ── Render Row 2: Opportunity + Depth ── */
-  document.getElementById('phRbRow2').innerHTML =
+  /* ── Render Row 1: Opportunity + Efficiency ── */
+  document.getElementById('phRbRow1').innerHTML =
     makeCustomTable(
       'Opportunity → Starts & Big-Score Frequency (%)',
       '% of innings reaching each run milestone\n→ How often does a start become something big?',
@@ -2394,6 +2518,16 @@ function initPhase(rawData) {
       yi => oppMat[yi].map(v => v === null ? '-' : v + '%'),
       (yi, ci) => heatBg(oppMat[yi][ci], oppLo, oppHi)
     ) +
+    makeCustomTable(
+      'Efficiency — Batting Score Conversion (%)',
+      'Where innings end\n→ Where do innings actually end?',
+      EFF_COLS.map(c => c.lbl),
+      yi => effMat[yi].map(v => v === null ? '-' : v + '%'),
+      (yi, ci) => heatBg(effMat[yi][ci], effLo, effHi)
+    );
+
+  /* ── Render Row 2: Depth + Reliability ── */
+  document.getElementById('phRbRow2').innerHTML =
     makeCustomTable(
       'Depth → Runs After Milestone (RA20 / RA50)',
       'Average runs scored beyond 20 and beyond 50, plus count of qualifying innings\n→ How deep does the innings go once set?',
@@ -2410,6 +2544,17 @@ function initPhase(rawData) {
       (yi, ci) => {
         if (ci === 0) return heatBg(depRows[yi].ra20, depRa20Lo, depRa20Hi);
         if (ci === 2) return heatBg(depRows[yi].ra50, depRa50Lo, depRa50Hi);
+        return '#1a1d2e';
+      }
+    ) +
+    makeCustomTable(
+      'Reliability → Batting Average & Not-Out %',
+      'Average, not-out rate and retired-hurt rate per period',
+      ['Batting Avg', 'Not Out %', 'Retired Hurt %'],
+      yi => [relRows[yi].avg, relRows[yi].no + '%', relRows[yi].rh + '%'],
+      (yi, ci) => {
+        if (ci === 0) return heatBg(relRows[yi].avg, relAvgLo, relAvgHi);
+        if (ci === 1) return heatBg(relRows[yi].no,  0, relNoHi || 1);
         return '#1a1d2e';
       }
     );
@@ -2815,13 +2960,13 @@ function initStats(rawData) {
   /* ── helpers ── */
   function statRow(label, val, sub) {
     return `<tr>
-      <td style="padding:7px 12px;color:#7a8499;font-size:0.75rem;white-space:nowrap">${label}</td>
+      <td style="padding:7px 12px;color:#7a8499;font-size:0.75rem;white-space:nowrap;width:120px;min-width:120px">${label}</td>
       <td style="padding:7px 12px;color:#d0d6e8;font-weight:600;font-size:0.78rem">${val}</td>
       ${sub !== undefined ? `<td style="padding:7px 12px;color:#7a8499;font-size:0.72rem">${sub}</td>` : '<td></td>'}
     </tr>`;
   }
   function tbl(rows) {
-    return `<table style="width:100%;border-collapse:collapse">
+    return `<table style="width:100%;border-collapse:collapse;border-top:none">
       <tbody>${rows.join('')}</tbody>
     </table>`;
   }
@@ -2912,7 +3057,7 @@ function initStats(rawData) {
     return `<div style="height:4px;background:#1a1d2e;border-radius:2px;margin-top:4px"><div style="height:4px;width:${w}%;background:${col};border-radius:2px"></div></div>`;
   }
 
-  const thTh = 'style="padding:6px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#7a8499;border-bottom:1px solid #333a50;white-space:nowrap"';
+  const thTh = 'style="padding:6px 10px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#7a8499;border-bottom:1px solid #333a50;white-space:nowrap;text-align:left"';
   const tdTd = 'style="padding:7px 10px;font-size:0.75rem;border-bottom:1px solid #222840;vertical-align:middle"';
 
   function formTable(rows, cols, rowFn) {
@@ -2925,7 +3070,7 @@ function initStats(rawData) {
     </table></div>`;
   }
 
-  const batFormTable = formTable(recentBat, ['Score','Opposition','Format','Date'],
+  const batFormTable = formTable(recentBat, ['Score','Opposition','Innings','Date'],
     r => {
       const opp    = r['Against'] || r['Opposition'] || '—';
       const fmt    = r['Innings Type'] || '—';
@@ -2941,7 +3086,7 @@ function initStats(rawData) {
 
   const bowlFormTable = bowlInns === 0
     ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data</div>'
-    : formTable(recentBowl, ['Figures','Opposition','Format','Date'],
+    : formTable(recentBowl, ['Figures','Opposition','Innings','Date'],
         r => {
           const opp = r['Against'] || r['Opposition'] || '—';
           const fmt = r['Innings Type'] || '—';
@@ -2971,8 +3116,10 @@ function initStats(rawData) {
       <!-- BATTING -->
       <div style="display:flex;flex-direction:column;gap:10px">
 
+
         ${card('Batting — Core', '🏏', tbl([
-          statRow('Innings',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
+          statRow('Matches', Math.max(...all.map(r => safeNum(r['Match_Num']))), ''),
+          statRow('Innings Batt',      batInns,     `${dismissed} dismissed, ${notOuts} not out`),
           statRow('Total Runs',   totalRuns,   ''),
           statRow('Batting Avg',  batAvg,      dismissed ? `${totalRuns} runs / ${dismissed} dismissals` : ''),
           statRow('Strike Rate',  batSR,       `${totalBalls} balls faced`),
@@ -2986,12 +3133,13 @@ function initStats(rawData) {
           statRow('Ducks',  ducks,    `${batInns ? (ducks/batInns*100).toFixed(1) : 0}% of innings`),
         ]))}
 
+
         ${card('Batting — Shot Profile', '🎯', tbl([
-          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs`),
-          statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs`),
-          statRow('Threes (3s)',    threes,   ''),
-          statRow('Twos (2s)',      twos,     ''),
-          statRow('Singles (1s)',   singles,  ''),
+          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs, ${totalBalls ? (total4s/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
+          statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs, ${totalBalls ? (total6s/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
+          statRow('Threes (3s)',    threes,   `${totalBalls ? (threes/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
+          statRow('Twos (2s)',      twos,     `${totalBalls ? (twos/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
+          statRow('Singles (1s)',   singles,  `${totalBalls ? (singles/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
           statRow('Dot Balls',      dotBalls, `${dotPct}% of balls`),
           statRow('Boundary Runs',  boundaryRuns, `${boundaryPct}% of total runs`),
         ]))}
