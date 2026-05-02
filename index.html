@@ -182,6 +182,44 @@
     .header-cc-link:hover { background: rgba(78,154,241,0.2); }
     .header-meta { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
 
+    /* ── PDF Export Button ── */
+    .btn-pdf {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.7rem; color: #52c41a;
+      background: rgba(82,196,26,0.1); border: 1px solid rgba(82,196,26,0.35);
+      padding: 5px 12px; border-radius: 6px; white-space: nowrap;
+      cursor: pointer; font-family: inherit; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-pdf:hover { background: rgba(82,196,26,0.22); }
+
+    /* ── Print / PDF styles ── */
+    @media print {
+      @page { margin: 14mm 12mm; size: A4 landscape; }
+      body { background: #fff !important; color: #111 !important; font-size: 11px; }
+      .header { display: none !important; }
+      .sidebar { display: none !important; }
+      .sidebar-backdrop { display: none !important; }
+      .rightpane { display: none !important; }
+      .shell { height: auto !important; overflow: visible !important; }
+      .main { overflow: visible !important; }
+      .content { max-width: 100% !important; padding: 0 !important; }
+      .stat-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important; break-inside: avoid; }
+      .chart-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important; break-inside: avoid; page-break-inside: avoid; }
+      .chart-title { color: #111 !important; }
+      .stat-label { color: #555 !important; }
+      .stat-value { color: #b05000 !important; }
+      /* Show all tabs in print mode */
+      [id^="tab-"] { display: block !important; margin-bottom: 16px; }
+      canvas { max-width: 100% !important; }
+      /* hide interactive controls */
+      .hamburger { display: none !important; }
+      .btn-pdf { display: none !important; }
+      .rd-table { color: #111 !important; }
+      .rd-table th { color: #555 !important; }
+      .rd-table tbody tr { border-color: #ddd !important; }
+    }
+
     /* ── Layout shell ── */
     .shell {
       display: flex;
@@ -485,6 +523,7 @@ function showTab(name, linkEl) {
     <!-- Removed Load CSV button and file input -->
     <!-- Removed Load from Google Sheet button -->
     <!-- Toast will be injected at the end of body -->
+    <button class="btn-pdf" onclick="exportPDF()" title="Print or save this page as PDF">🖨️ Export PDF</button>
     <div class="header-meta" id="headerMeta">Loading…</div>
   </div>
 </div>
@@ -617,6 +656,49 @@ Chart.defaults.font.size = 11;
 
 /* ── renamed: overview init ── */
 function initOverview(rawData) { init(rawData); }
+
+/* ── PDF Export ── */
+function exportPDF() {
+  if (!_globalData) { alert('Data not loaded yet. Please wait and try again.'); return; }
+
+  // 1. Initialize any tab that hasn't been rendered yet
+  const allTabs = ['stats','overview','position','league','phase','consistency',
+                   'bowl-overview','bowl-league','bowl-phase','rawdata'];
+  allTabs.forEach(name => {
+    if (!_tabCharts[name]) {
+      // Make the tab visible so Chart.js can measure canvas dimensions
+      const el = document.getElementById('tab-' + name);
+      if (el) el.style.display = '';
+      if (name === 'stats')         initStats(_globalData);
+      if (name === 'overview')      initOverview(_globalData);
+      if (name === 'position')      initPosition(_globalData);
+      if (name === 'league')        initLeague(_globalData);
+      if (name === 'phase')         initPhase(_globalData);
+      if (name === 'consistency')   initConsistency(_globalData);
+      if (name === 'bowl-overview') initBowlOverview(_globalData);
+      if (name === 'bowl-league')   initBowlLeague(_globalData);
+      if (name === 'bowl-phase')    initBowlPhase(_globalData);
+      if (name === 'rawdata')       initRawData(_globalData);
+      _tabCharts[name] = true;
+    }
+  });
+
+  // 2. Show all tabs
+  const tabs = document.querySelectorAll('[id^="tab-"]');
+  const hidden = [];
+  tabs.forEach(t => {
+    if (t.style.display === 'none') { hidden.push(t); t.style.display = ''; }
+  });
+
+  // 3. Give charts a tick to paint, then open print dialog
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      window.print();
+      // 4. Restore hidden tabs after dialog closes
+      hidden.forEach(t => { t.style.display = 'none'; });
+    }, 300);
+  });
+}
 
 // Removed file input event listener since Google Sheets is used as input.
 
@@ -915,7 +997,13 @@ function renderRuns(bat, rolling10) {
       },
       scales:{
         x:{ grid:{display:false}, ticks:{display:false}, border:{display:false} },
-        y:{ grid:{color:'rgba(255,255,255,0.06)'}, border:{display:false}, ticks:{maxTicksLimit:5} }
+        y:{ 
+          grid:{color:'rgba(255,255,255,0.06)'}, 
+          border:{display:false}, 
+          min: 0,
+          max: 200,
+          ticks:{stepSize:25, maxTicksLimit:10} 
+        }
       }
     },
     plugins:[{
@@ -961,16 +1049,20 @@ function renderCareer(bat, cumAVG, cumSR, rolling10) {
         legend:{display:true,position:'top',labels:{boxWidth:18,padding:12}},
         tooltip:TOOLTIP
       },
-      scales:{
-        x:{ grid:{display:false}, border:{display:false},
-            ticks:{maxTicksLimit:10,callback(v,i){return i%10===0?this.getLabelForValue(v):'';}} },
-        yL:{ type:'linear', position:'left',  grid:{color:'rgba(255,255,255,0.06)'}, border:{display:false},
-             ticks:{color:'#f0803c',maxTicksLimit:5},
-             title:{display:true,text:'Avg',color:'#f0803c',font:{size:10}} },
-        yR:{ type:'linear', position:'right', grid:{display:false}, border:{display:false},
-             ticks:{color:'#4e9af1',maxTicksLimit:5},
-             title:{display:true,text:'SR',color:'#4e9af1',font:{size:10}} }
-      }
+       scales:{
+         x:{ grid:{display:false}, border:{display:false},
+          ticks:{maxTicksLimit:10,callback(v,i){return i%10===0?this.getLabelForValue(v):'';}} },
+         yL:{ type:'linear', position:'left',  grid:{color:'rgba(255,255,255,0.06)'}, border:{display:false},
+           min: 0,
+           max: 100,
+           ticks:{color:'#f0803c',stepSize:10,maxTicksLimit:10},
+           title:{display:true,text:'Avg',color:'#f0803c',font:{size:10}} },
+         yR:{ type:'linear', position:'right', grid:{display:false}, border:{display:false},
+           min: 0,
+           max: 200,
+           ticks:{color:'#4e9af1',stepSize:10,maxTicksLimit:10},
+           title:{display:true,text:'SR',color:'#4e9af1',font:{size:10}} }
+       }
     }
   });
 }
@@ -1418,7 +1510,8 @@ function loadFromCsvString(csvStr) {
     showTab(activeTab, null);
   }
   initAchievements(_globalData);
-  document.getElementById('loadStatus').textContent = '✓ Data loaded';
+  const loadStatusEl = document.getElementById('loadStatus');
+  if (loadStatusEl) loadStatusEl.textContent = '✓ Data loaded';
 }
 
 /* ══════════════════════════════════════
@@ -2108,7 +2201,7 @@ function initPhase(rawData) {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
     // Set green threshold for each phase (customize as needed)
     // Add SR range label for Strike Rate table
-    let srRanges = ["60–80", "75–95", "85–120+"];
+    let srRanges = ["60%–80%", "75%–95%", "85%–120%"];
     let srNotes = [
       "Settling with purpose, avoiding paralysis or reckless start",
       "Intent converted via rotation + selective boundaries",
@@ -2116,21 +2209,21 @@ function initPhase(rawData) {
     ];
     let headCols;
     if (title.startsWith('Strike Rate')) {
-      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${srRanges[idx]}</span></th>`).join('');
+      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${srRanges[idx]}</span></th>`).join('');
     } else if (title.startsWith('Dot Ball %')) {
       let dotRanges = ["≤ 40%", "≤ 50%", "≤ 60%"];
-      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${dotRanges[idx]}</span></th>`).join('');
+      headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${dotRanges[idx]}</span></th>`).join('');
     } else if (title.startsWith('Rotation Rate')) {
       let rotRanges = ["≥ 60%", "≥ 50%", "≥ 40%"];
-      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${rotRanges[idx]}</span></th>`).join('');
+      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${rotRanges[idx]}</span></th>`).join('');
     } else if (title.startsWith('Boundary Dependency')) {
       let bndRanges = ["≤ 35%", "≤ 45%", "≤ 55%"];
-      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${bndRanges[idx]}</span></th>`).join('');
+      headCols = PHASES.map((ph, idx) => `<th style=\"${TH}\">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${bndRanges[idx]}</span></th>`).join('');
     } else {
       headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}</th>`).join('');
     }
     let showLegend = false;
-    let customCaption = caption;
+    let customCaption = `<span style='color:#52c41a'>${caption}</span>`;
     // Use cricket cutoffs for color, not relative scaling
     let colorFn = (v, idx) => {
       if (v === null) return '#1a1d2e';
@@ -2252,7 +2345,7 @@ function initPhase(rawData) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">${customCaption}</div>
+      <div style="font-size:0.7rem;color:#52c41a;margin-top:8px;font-style:italic">${customCaption}</div>
       ${legend}
     </div>`;
   }
@@ -2280,7 +2373,7 @@ function initPhase(rawData) {
       '≤ 30%',
       '≤ 20%'
     ];
-    const headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#aaa'>${phaseCutoffs[idx]}</span></th>`).join('');
+    const headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${phaseCutoffs[idx]}</span></th>`).join('');
     const rows = halfYears.map((h, yIdx) => {
       const cells = PHASES.map((_,pIdx) => {
         const c   = disMat[yIdx][pIdx];
@@ -2307,13 +2400,13 @@ function initPhase(rawData) {
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead>
-            <tr><th colspan="${PHASES.length+1}" style="padding:3px 14px;text-align:right;color:#444;font-size:0.69rem;font-weight:500;border-bottom:1px solid #2a2f44">Batting Phase / Dismissals</th></tr>
-            <tr><th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year ▴</th>${headCols}</tr>
+
+            <tr><th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>${headCols}</tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">Dismissed innings per phase as count and % of total innings for that period<br>→ In which phase does the innings most frequently end?</div>
+      <div style="font-size:0.7rem;color:#52c41a;margin-top:8px;font-style:italic">Dismissed innings per phase as count and % of total innings for that period<br>→ In which phase does the innings most frequently end?</div>
       ${legend}
     </div>`;
   }
@@ -2432,7 +2525,7 @@ function initPhase(rawData) {
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead><tr>
-            <th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year ▴</th>
+            <th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>
             ${headCols}
           </tr></thead>
           <tbody>${bodyRows}</tbody>
@@ -3149,7 +3242,7 @@ function initStats(rawData) {
       <!-- BOWLING -->
       <div style="display:flex;flex-direction:column;gap:10px">
 
-        ${card('Bowling — Core', '🎳', bowlInns === 0
+        ${card('Bowling — Core', ' 🔴', bowlInns === 0
           ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
           : tbl([
             statRow('Innings Bowled', bowlInns,   ''),
@@ -3901,16 +3994,10 @@ function showToast(message, duration = 2000) {
 
 // Add Google Sheet loader
 document.addEventListener('DOMContentLoaded', function() {
-  showToast('Loading from Google Sheet...', 1500);
   fetch(GOOGLE_SHEET_CSV_URL)
     .then(r => r.text())
-    .then(csv => {
-      loadFromCsvString(csv);
-      showToast('Loaded from Google Sheet!', 2000);
-    })
-    .catch(e => {
-      showToast('Failed to load Google Sheet.', 3000);
-    });
+    .then(csv => { loadFromCsvString(csv); })
+    .catch(e => { console.error('Fetch error:', e); showToast('Failed to load data.', 3000); });
 });
 // ...existing code...
 </script>
