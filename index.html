@@ -1,118 +1,4 @@
-﻿  <style>
-    /* Responsive layout for mobile */
-    @media (max-width: 900px) {
-    /* Responsive layout for mobile */
-    @media (max-width: 900px) {
-      .sidebar {
-        position: fixed;
-        max-width: 80vw;
-        left: 0;
-        top: 56px;
-        height: calc(100vh - 56px);
-        z-index: 1101;
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-      }
-      .sidebar.open {
-        transform: translateX(0);
-      }
-      .sidebar-backdrop { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(20,22,30,0.45); }
-      .sidebar.open ~ .sidebar-backdrop { display: block; }
-      .rightpane { display: none !important; }
-      .main { min-width: 0; }
-    }
-    @media (max-width: 700px) {
-      .header {
-        flex-direction: row;
-        align-items: center;
-        gap: 6px;
-        padding: 2px 2px 2px 2px;
-        min-height: 28px;
-        justify-content: flex-start;
-      }
-      .header-jersey {
-        width: 20px;
-        height: 20px;
-        margin-bottom: 0;
-      }
-      .header-info {
-        text-align: left;
-        width: auto;
-        flex: 1;
-      }
-      .header-name {
-        font-size: 0.7rem;
-        font-weight: 700;
-      }
-      .header-sub {
-        display: none;
-      }
-      .header-links {
-        display: none;
-      }
-      .header-cc-link {
-        display: none;
-      }
-      .header-meta {
-        display: none;
-      }
-      .content {
-        padding: 4px 2px;
-      }
-      .hamburger {
-        align-self: center;
-        margin-bottom: 0;
-        width: 20px;
-        height: 20px;
-      }
-    }
-    @media (max-width: 600px) {
-      /* 3 cards per row for stat cards on mobile */
-      .stat-cards,
-      [id^="statCards"] {
-        grid-template-columns: repeat(5, 1fr) !important;
-      }
-      .form-tables-row,
-      .row,
-      .row-2,
-      .row-3,
-      [id^="bowlCards"] {
-        grid-template-columns: 1fr !important;
-      }
-      .stat-card,
-      .chart-card {
-        width: 100% !important;
-        min-width: 0 !important;
-        box-sizing: border-box !important;
-      }
-    }
-    @media (max-width: 700px) {
-      .header { padding: 0 8px; min-height: 48px; }
-      .header-jersey { width: 34px; height: 34px; }
-      .header-name { font-size: 0.95rem; }
-      .header-links { gap: 6px; }
-      .header-cc-link { padding: 4px 8px; font-size: 0.65rem; }
-      .header-meta { display: none; }
-      .content { padding: 8px 4px; }
-    }
-    /* Hide header on scroll down, show on scroll up */
-    .header.hide { transform: translateY(-100%); transition: transform 0.3s cubic-bezier(.4,0,.2,1); }
-    .header { transition: transform 0.3s cubic-bezier(.4,0,.2,1); position: sticky; top: 0; z-index: 1003; }
-    /* Hamburger for mobile */
-    .hamburger {
-      display: none; position: relative; width: 34px; height: 34px; margin-right: 10px; cursor: pointer; z-index: 1100;
-    }
-    .hamburger span {
-      display: block; height: 4px; width: 24px; background: #f0a040; margin: 5px auto; border-radius: 2px;
-      transition: all 0.3s cubic-bezier(.4,0,.2,1);
-    }
-    @media (max-width: 900px) {
-      .hamburger { display: block; }
-    }
-    /* Overlay for sidebar */
-    .sidebar-backdrop { display: none; }
-    .sidebar.open ~ .sidebar-backdrop { display: block; }
-  </style>
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -455,13 +341,73 @@
     .phase-legend span { display: flex; align-items: center; gap: 4px; }
     .phase-legend .dot { width: 10px; height: 10px; border-radius: 2px; }
 
+    /* ── Sticky header show/hide ── */
+    .header { transition: transform 0.3s cubic-bezier(.4,0,.2,1); position: sticky; top: 0; z-index: 1003; }
+    .header.hide { transform: translateY(-100%); }
+
+    /* ── Hamburger ── */
+    .hamburger { display: none; position: relative; width: 34px; height: 34px; margin-right: 10px; cursor: pointer; z-index: 1100; flex-shrink: 0; }
+    .hamburger span { display: block; height: 3px; width: 22px; background: #f0a040; margin: 5px auto; border-radius: 2px; transition: all 0.3s; }
+
+    /* ── Sidebar backdrop ── */
+    .sidebar-backdrop { display: none; }
+    .sidebar.open ~ .sidebar-backdrop { display: block; }
+
+    /* ── Tablet (≤1200px) ── */
     @media (max-width: 1200px) {
       .stat-cards { grid-template-columns: repeat(7, 1fr); }
       .row-2, .row-3 { grid-template-columns: 1fr !important; }
     }
-    @media (max-width: 600px) {
-      .stat-cards { grid-template-columns: repeat(4, 1fr); }
+
+    /* ── Tablet/Mobile (≤900px): slide-out sidebar ── */
+    @media (max-width: 900px) {
+      .hamburger { display: flex; flex-direction: column; justify-content: center; }
+      .sidebar {
+        position: fixed;
+        max-width: 80vw;
+        left: 0;
+        top: 56px;
+        height: calc(100vh - 56px);
+        z-index: 1101;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-backdrop { display: none; position: fixed; z-index: 1100; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(20,22,30,0.5); }
+      .sidebar.open ~ .sidebar-backdrop { display: block; }
+      .rightpane { display: none !important; }
+      .main { min-width: 0; overflow-x: hidden; }
     }
+
+    /* ── Mobile (≤700px): compact header, hide links ── */
+    @media (max-width: 700px) {
+      .header { padding: 0 10px; min-height: 48px; gap: 10px; }
+      .header-jersey { width: 34px; height: 34px; flex-shrink: 0; }
+      .header-jersey .jnum { font-size: 1rem; }
+      .header-info { flex: 1; min-width: 0; }
+      .header-name { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .header-sub { display: none; }
+      .header-links { display: none !important; }
+      .header-meta { display: none; }
+      .content { padding: 8px 8px; }
+      #phRow1, #phRow2, #phRbRow1, #phRbRow2 { grid-template-columns: 1fr !important; }
+      #phRow1 > *, #phRow2 > *, #phRbRow1 > *, #phRbRow2 > * { min-width: 0; }
+    }
+
+    /* ── Small mobile (≤480px) ── */
+    @media (max-width: 480px) {
+      .stat-cards,
+      [id^="statCards"] { grid-template-columns: repeat(3, 1fr) !important; }
+      .stat-value { font-size: 0.95rem; }
+      .stat-label { font-size: 0.55rem; }
+      .row, .row-2, .row-3, [id^="bowlCards"] { grid-template-columns: 1fr !important; }
+      .stat-card, .chart-card { width: 100% !important; min-width: 0 !important; }
+      .chart-card canvas { max-width: 100%; }
+    }
+
+    /* ── No horizontal scroll on body ── */
+    body { overflow-x: hidden; }
+    .shell { overflow-x: hidden; }
   </style>
 <script>
 // Global variables for tab state and data
@@ -523,7 +469,6 @@ function showTab(name, linkEl) {
     <!-- Removed Load CSV button and file input -->
     <!-- Removed Load from Google Sheet button -->
     <!-- Toast will be injected at the end of body -->
-    <button class="btn-pdf" onclick="exportPDF()" title="Print or save this page as PDF">🖨️ Export PDF</button>
     <div class="header-meta" id="headerMeta">Loading…</div>
   </div>
 </div>
@@ -556,6 +501,11 @@ function showTab(name, linkEl) {
     <div class="sidebar-divider"></div>
     <div class="sidebar-section">
       <a href="#" onclick="showTab('rawdata',this);return false;" style="margin:0 6px 8px;display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(76,201,192,0.08);border:1px solid rgba(76,201,192,0.25);border-radius:7px;color:#4cc9c0;font-size:0.78rem;font-weight:700;text-decoration:none">📋 Raw Data</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section" style="padding:0 8px 8px">
+      <a href="https://cricclubs.com/CricketofSanAntonio/viewPlayer.do?playerId=3682166&amp;clubId=6845" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(78,154,241,0.08);border:1px solid rgba(78,154,241,0.25);border-radius:7px;color:#4e9af1;font-size:0.78rem;font-weight:700;text-decoration:none;margin-bottom:6px">🌐 CricClubs Profile</a>
+      <button onclick="exportPDF()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:rgba(82,196,26,0.08);border:1px solid rgba(82,196,26,0.25);border-radius:7px;color:#52c41a;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;text-align:center">🖨️ Export PDF</button>
     </div>
   </nav>
 
@@ -2201,7 +2151,7 @@ function initPhase(rawData) {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
     // Set green threshold for each phase (customize as needed)
     // Add SR range label for Strike Rate table
-    let srRanges = ["60%–80%", "75%–95%", "85%–120%"];
+    let srRanges = ["60–80 / >80 ✓", "75–95 / >95 ✓", "85–120 / >120 ✓"];
     let srNotes = [
       "Settling with purpose, avoiding paralysis or reckless start",
       "Intent converted via rotation + selective boundaries",
@@ -2222,39 +2172,10 @@ function initPhase(rawData) {
     } else {
       headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}</th>`).join('');
     }
-    let showLegend = false;
-    let customCaption = `<span style='color:#52c41a'>${caption}</span>`;
+    let customCaption = '';
     // Use cricket cutoffs for color, not relative scaling
     let colorFn = (v, idx) => {
       if (v === null) return '#1a1d2e';
-      // Opportunity → Starts & Big‑Score Frequency
-      if (title.startsWith('Opportunity')) {
-        // idx: 0 = ≥20 Runs %, 1 = ≥30 Runs %, 2 = ≥50 Runs %, 3 = ≥100 Runs %
-        if (idx === 0) {
-          // ≥20 Runs %: green ≥50, orange 35–49, red <35
-          if (v >= 50) return 'rgba(39,174,96,0.82)';
-          if (v >= 35) return 'rgba(240,160,64,0.82)';
-          return 'rgba(231,76,60,0.82)';
-        }
-        if (idx === 1) {
-          // ≥30 Runs %: green ≥35, orange 20–34, red <20
-          if (v >= 35) return 'rgba(39,174,96,0.82)';
-          if (v >= 20) return 'rgba(240,160,64,0.82)';
-          return 'rgba(231,76,60,0.82)';
-        }
-        if (idx === 2) {
-          // ≥50 Runs %: green ≥20, orange 10–19, red <10
-          if (v >= 20) return 'rgba(39,174,96,0.82)';
-          if (v >= 10) return 'rgba(240,160,64,0.82)';
-          return 'rgba(231,76,60,0.82)';
-        }
-        if (idx === 3) {
-          // ≥100 Runs %: green ≥5, orange 1–4, red 0
-          if (v >= 5) return 'rgba(39,174,96,0.82)';
-          if (v >= 1) return 'rgba(240,160,64,0.82)';
-          return 'rgba(231,76,60,0.82)';
-        }
-      }
       // Strike Rate
       if (title.startsWith('Strike Rate')) {
         // Early: 60–80, Middle: 75–95, Late: 85–120+
@@ -2294,7 +2215,6 @@ function initPhase(rawData) {
       return heatBg(v, lo, hi, invert);
     };
     if (title.startsWith('Dot Ball %')) {
-      showLegend = false;
       customCaption = 'Non-scoring balls by batting phase. Lower values indicate better strike rotation and pressure management.';
     }
     const rows = halfYears.map((h, yIdx) => {
@@ -2302,37 +2222,20 @@ function initPhase(rawData) {
         const v   = matrix[yIdx][pIdx];
         const txt = v === null ? '-' : (v + unit);
         const bg  = colorFn(v, pIdx);
-        return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600;border-bottom:1px solid #1a1d2e">${txt}</td>`;
+        return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600">${txt}</td>`;
       }).join('');
-      return `<tr><td style="padding:6px 12px;color:#d0d6e8;border-bottom:1px solid #1a1d2e;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
+      return `<tr><td style="padding:6px 12px;color:#d0d6e8;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
     }).join('');
     const shortTitle = title.replace(/ \(.*$/, '');
     let legend = '';
     if (title.startsWith('Strike Rate')) {
-      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
-        <span style='display:block'><b>60–80</b> → Settling with purpose, avoiding paralysis or reckless start</span>
-        <span style='display:block'><b>75–95</b> → Intent converted via rotation + selective boundaries</span>
-        <span style='display:block'><b>85–120+</b> → Accelerated intent, fitness & bat-speed dependent</span>
-      </div>`;
+      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>SR tracks scoring intent by phase. Orange = functional but needs lift. Green = controlling the tempo. Early SR matters less than not getting dismissed cheaply.</div>`;
     } else if (title.startsWith('Dot Ball %')) {
-      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
-        <span style='display:block'><b>≤ 40%</b> → Limited tolerance for pressure; early freeze is dangerous</span>
-        <span style='display:block'><b>≤ 50%</b> → Pressure acceptable but must be managed</span>
-        <span style='display:block'><b>≤ 60%</b> → Tactical dots allowed for boundary setup</span>
-      </div>`;
+      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Every unscored ball compounds pressure. A high early dot% often triggers panic shots. Lower is always better across all phases.</div>`;
     } else if (title.startsWith('Rotation Rate')) {
-      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
-        <span style='display:block'><b>≥ 60%</b> → Soft hands, awareness, strike rotation</span>
-        <span style='display:block'><b>≥ 50%</b> → Key indicator of batting IQ</span>
-        <span style='display:block'><b>≥ 40%</b> → Fitness + late-innings awareness</span>
-      </div>`;
+      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Singles and twos as % of balls faced. High rotation keeps the scoreboard moving without boundary risk — the clearest signal of batting IQ.</div>`;
     } else if (title.startsWith('Boundary Dependency')) {
-      legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
-        <span style='display:block'><b>≤ 35%</b> → Technique-driven scoring</span>
-        <span style='display:block'><b>≤ 45%</b> → Balanced method</span>
-        <span style='display:block'><b>≤ 55%</b> → Boundary plays a larger but controlled role</span>
-        <span style='display:block;color:#f0a040;margin-top:4px'><span style='font-size:1.1em;vertical-align:-2px'>⚠️</span> Early or middle dependency &gt; 50% = fragile profile at higher levels</span>
-      </div>`;
+      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>% of total runs from fours and sixes. Heavy reliance means one tight spell = scoreboard stagnation.</div><div style='margin-top:3px;font-size:0.71rem;color:#e05252'>⚠ >50% in Early or Middle — fragile against any bowler hitting a good length</div>`;
     }
     return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
       <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">${title}</div>
@@ -2345,7 +2248,6 @@ function initPhase(rawData) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="font-size:0.7rem;color:#52c41a;margin-top:8px;font-style:italic">${customCaption}</div>
       ${legend}
     </div>`;
   }
@@ -2385,16 +2287,12 @@ function initPhase(rawData) {
           else if (pIdx === 1) bg = c.p <= 30 ? 'rgba(39,174,96,0.82)' : c.p <= 35 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
           else if (pIdx === 2) bg = c.p <= 20 ? 'rgba(39,174,96,0.82)' : c.p <= 25 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
         }
-        return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600;border-bottom:1px solid #1a1d2e">${txt}</td>`;
+        return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600">${txt}</td>`;
       }).join('');
-      return `<tr><td style="padding:6px 12px;color:#d0d6e8;border-bottom:1px solid #1a1d2e;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
+      return `<tr><td style="padding:6px 12px;color:#d0d6e8;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
     }).join('');
-    // Legend for Dismissals %
-    const legend = `<div style='margin-top:8px;font-size:0.72rem;color:#aaa;line-height:1.5'>
-      <span style='display:block'><b>≤ 35%</b> → Should survive the settling phase</span>
-      <span style='display:block'><b>≤ 30%</b> → Set batters shouldn’t donate wickets</span>
-      <span style='display:block'><b>≤ 20%</b> → Risk acceptable only after value added</span>
-    </div>`;
+    // Dismissals legend
+    const legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Count and % of total innings dismissed in each phase. The phase with the highest % is the key danger zone — where the innings most often ends.</div>`;
     return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
       <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Dismissals — Failure Point by Batting Phase</div>
       <div style="overflow-x:auto">
@@ -2406,7 +2304,6 @@ function initPhase(rawData) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <div style="font-size:0.7rem;color:#52c41a;margin-top:8px;font-style:italic">Dismissed innings per phase as count and % of total innings for that period<br>→ In which phase does the innings most frequently end?</div>
       ${legend}
     </div>`;
   }
@@ -2428,9 +2325,14 @@ function initPhase(rawData) {
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;margin-bottom:14px;text-align:center">
       <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">Batting Phase Analysis (Balls-Based)</div>
       <div style="font-size:0.75rem;color:#7a8499">Intent → Pressure Accumulation → Pressure Release → Scoring Method → Failure Point</div>
+      <div style="font-size:0.7rem;color:#8a92a8;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(39,174,96,0.82)"></span> on track</span>
+        <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(240,160,64,0.82)"></span> developing</span>
+        <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(231,76,60,0.82)"></span> needs work</span>
+      </div>
     </div>
-    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRow1"></div>
-    <div class="row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px" id="phRow2"></div>
+    <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px;margin-bottom:12px" id="phRow1"></div>
+    <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin-bottom:12px" id="phRow2"></div>
     <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
       <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:4px">
         Balls Faced vs Runs Scored
@@ -2466,8 +2368,8 @@ function initPhase(rawData) {
       { label:'Not Out',   data: scatterData.filter(d=>!d.dismissed),
         backgroundColor:'rgba(82,196,26,0.75)',   pointRadius:5, pointHoverRadius:7 },
       { label:'SR = 100',  data:[{x:0,y:0},{x:maxB,y:maxB}],
-        type:'line', borderColor:'rgba(255,255,255,0.15)', borderWidth:1,
-        borderDash:[4,4], pointRadius:0, tension:0 }
+        type:'line', borderColor:'rgba(255,255,255,0.45)', borderWidth:1.5,
+        borderDash:[6,4], pointRadius:0, tension:0 }
     ]},
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -2495,51 +2397,22 @@ function initPhase(rawData) {
       <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;margin-bottom:14px;text-align:center">
         <div style="font-size:1rem;font-weight:700;color:#d0d6e8;margin-bottom:2px">Batting Phase Analysis (Runs-Based)</div>
         <div style="font-size:0.75rem;color:#7a8499">Opportunity → Efficiency → Depth → Reliability</div>
-        <div style="font-size:0.7rem;color:#556;margin-top:3px">How often opportunities appear, how efficiently they're converted, how deep the innings run once set, and how reliable the output per dismissal is.</div>
+        <div style="font-size:0.7rem;color:#8a92a8;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px">
+          <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(39,174,96,0.82)"></span> on track</span>
+          <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(240,160,64,0.82)"></span> developing</span>
+          <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:11px;height:11px;border-radius:2px;background:rgba(231,76,60,0.82)"></span> needs work</span>
+        </div>
       </div>
-      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow1"></div>
-      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" id="phRbRow2"></div>
+      <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px;margin-bottom:12px" id="phRbRow1"></div>
+      <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px;margin-bottom:12px" id="phRbRow2"></div>
     </div>
   `);
 
-  /* ── generic custom table builder ── */
-  function makeCustomTable(title, caption, colHeaders, getRow, getColor) {
-    const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
-    let headCols;
-    if (title.startsWith('Opportunity')) {
-      // Add green cutoff values to column headers
-      const greenCutoffs = ['≥ 50%', '≥ 35%', '≥ 20%', '≥ 5%'];
-      headCols = colHeaders.map((h, i) => `<th style="${TH}">${h}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${greenCutoffs[i] || ''}</span></th>`).join('');
-    } else {
-      headCols = colHeaders.map(h => `<th style="${TH}">${h}</th>`).join('');
-    }
-    const bodyRows = halfYears.map((h, yi) => {
-      const cells = getRow(yi).map((txt, ci) => {
-        const bg = getColor(yi, ci);
-        return `<td style="padding:6px 14px;text-align:center;background:${bg};color:#fff;font-weight:600;border-bottom:1px solid #1a1d2e">${txt}</td>`;
-      }).join('');
-      return `<tr><td style="padding:6px 12px;color:#d0d6e8;border-bottom:1px solid #1a1d2e;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
-    }).join('');
-    return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
-      <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">${title}</div>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
-          <thead><tr>
-            <th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>
-            ${headCols}
-          </tr></thead>
-          <tbody>${bodyRows}</tbody>
-        </table>
-      </div>
-      <div style="font-size:0.7rem;color:#555;margin-top:8px;font-style:italic">${caption}</div>
-    </div>`;
-  }
-
   /* ── Efficiency: score conversion rates ── */
   const EFF_COLS = [
-    { lbl:'20→40 (Target: 65%)', from:20, to:40 },
-    { lbl:'40→50 (Target: 60%)', from:40, to:50 },
-    { lbl:'50→100 (Target: 35%)', from:50, to:100 },
+    { lbl:'20→40', from:20, to:40 },
+    { lbl:'40→50', from:40, to:50 },
+    { lbl:'50→100', from:50, to:100 },
   ];
   const effMat = halfYears.map(h => {
     const arr = hyMap[h] || [];
@@ -2549,10 +2422,6 @@ function initPhase(rawData) {
       return base > 0 ? Math.round(next / base * 100) : null;
     });
   });
-  const effFlat = effMat.flat().filter(v => v !== null);
-  const effLo = effFlat.length ? Math.min(...effFlat) : 0;
-  const effHi = effFlat.length ? Math.max(...effFlat) : 100;
-
   /* ── Reliability: avg, not-out %, retired hurt % ── */
   const relRows = halfYears.map(h => {
     const arr = hyMap[h] || [];
@@ -2566,8 +2435,6 @@ function initPhase(rawData) {
   const relAvgVals = relRows.map(r => r.avg);
   const relAvgLo   = Math.min(...relAvgVals);
   const relAvgHi   = Math.max(...relAvgVals);
-  const relNoVals  = relRows.map(r => r.no);
-  const relNoHi    = Math.max(...relNoVals);
 
   /* ── Opportunity: % innings reaching milestones ── */
   const OPP_COLS = [
@@ -2581,10 +2448,6 @@ function initPhase(rawData) {
     const n   = arr.length;
     return OPP_COLS.map(c => n > 0 ? Math.round(arr.filter(r => safeNum(r['Runs']) >= c.min).length / n * 100) : null);
   });
-  const oppFlat = oppMat.flat().filter(v => v !== null);
-  const oppLo = oppFlat.length ? Math.min(...oppFlat) : 0;
-  const oppHi = oppFlat.length ? Math.max(...oppFlat) : 100;
-
   /* ── Depth: runs after milestone ── */
   const depRows = halfYears.map(h => {
     const arr  = hyMap[h] || [];
@@ -2594,62 +2457,115 @@ function initPhase(rawData) {
     const ra50 = gt50.length > 0 ? +(gt50.reduce((s,r) => s + safeNum(r['Runs']) - 50, 0) / gt50.length).toFixed(1) : null;
     return { ra20, c20: gt20.length, ra50, c50: gt50.length };
   });
-  const depRa20Vals = depRows.map(r => r.ra20).filter(v => v !== null);
-  const depRa50Vals = depRows.map(r => r.ra50).filter(v => v !== null);
-  const depRa20Lo = depRa20Vals.length ? Math.min(...depRa20Vals) : 0;
-  const depRa20Hi = depRa20Vals.length ? Math.max(...depRa20Vals) : 1;
-  const depRa50Lo = depRa50Vals.length ? Math.min(...depRa50Vals) : 0;
-  const depRa50Hi = depRa50Vals.length ? Math.max(...depRa50Vals) : 1;
-
+  /* ── colour helpers for Runs-Based tables ── */
+  function oppColor(v, ci) {
+    if (v === null) return '#1a1d2e';
+    if (ci === 0) return v >= 50 ? 'rgba(39,174,96,0.82)' : v >= 35 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    if (ci === 1) return v >= 35 ? 'rgba(39,174,96,0.82)' : v >= 20 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    if (ci === 2) return v >= 20 ? 'rgba(39,174,96,0.82)' : v >= 10 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    if (ci === 3) return v >= 5  ? 'rgba(39,174,96,0.82)' : v >= 1  ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    return '#1a1d2e';
+  }
+  function effColor(v, ci) {
+    if (v === null) return '#1a1d2e';
+    // 20→40: ≥65% green, ≥50% orange; 40→50: ≥60% green, ≥45% orange; 50→100: ≥35% green, ≥20% orange
+    if (ci === 0) return v >= 65 ? 'rgba(39,174,96,0.82)' : v >= 50 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    if (ci === 1) return v >= 60 ? 'rgba(39,174,96,0.82)' : v >= 45 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    if (ci === 2) return v >= 35 ? 'rgba(39,174,96,0.82)' : v >= 20 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+    return '#1a1d2e';
+  }
 
   /* ── Render Row 1: Opportunity + Efficiency ── */
+  const OPP_TARGETS = ['≥ 50%', '≥ 35%', '≥ 20%', '≥ 5%'];
+  const EFF_TARGETS = ['≥ 65%', '≥ 60%', '≥ 35%'];
+  const TH_RB = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
+
+  function makeRbTable(title, caption, colHeaders, targets, getRow, getColor, legend='') {
+    const headCols = colHeaders.map((h, i) =>
+      `<th style="${TH_RB}">${h}${targets[i] ? `<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${targets[i]}</span>` : ''}</th>`
+    ).join('');
+    const bodyRows = halfYears.map((h, yi) => {
+      const cells = getRow(yi).map((txt, ci) =>
+        `<td style="padding:6px 14px;text-align:center;background:${getColor(yi,ci)};color:#fff;font-weight:600">${txt}</td>`
+      ).join('');
+      return `<tr><td style="padding:6px 12px;color:#d0d6e8;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
+    }).join('');
+    return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+      <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">${title}</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
+          <thead><tr>
+            <th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>
+            ${headCols}
+          </tr></thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </div>
+      ${legend}
+    </div>`;
+  }
+
   document.getElementById('phRbRow1').innerHTML =
-    makeCustomTable(
-      'Opportunity → Starts & Big-Score Frequency (%)',
-      '% of innings reaching each run milestone\n→ How often does a start become something big?',
-      OPP_COLS.map(c => c.lbl),
+    makeRbTable(
+      'Opportunity → Starts & Big-Score Frequency',
+      '% of innings reaching each run milestone — how often does a start become something big?',
+      OPP_COLS.map(c => c.lbl), OPP_TARGETS,
       yi => oppMat[yi].map(v => v === null ? '-' : v + '%'),
-      (yi, ci) => heatBg(oppMat[yi][ci], oppLo, oppHi)
+      (yi, ci) => oppColor(oppMat[yi][ci], ci),
+      `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>How often a start converts to a bigger score. The ≥50 and ≥100 columns reveal whether starts are being turned into real contributions.</div>`
     ) +
-    makeCustomTable(
-      'Efficiency — Batting Score Conversion (%)',
-      'Where innings end\n→ Where do innings actually end?',
-      EFF_COLS.map(c => c.lbl),
+    makeRbTable(
+      'Efficiency — Score Conversion Rate',
+      '% of innings that reached the lower threshold and went on to reach the higher — where do innings stall?',
+      EFF_COLS.map(c => c.lbl), EFF_TARGETS,
       yi => effMat[yi].map(v => v === null ? '-' : v + '%'),
-      (yi, ci) => heatBg(effMat[yi][ci], effLo, effHi)
+      (yi, ci) => effColor(effMat[yi][ci], ci),
+      `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Given you crossed the lower bar, did you go on? The 50→100 conversion gap is where elite innings separate from good ones.</div>`
     );
 
   /* ── Render Row 2: Depth + Reliability ── */
   document.getElementById('phRbRow2').innerHTML =
-    makeCustomTable(
+    makeRbTable(
       'Depth → Runs After Milestone (RA20 / RA50)',
-      'Average runs scored beyond 20 and beyond 50, plus count of qualifying innings\n→ How deep does the innings go once set?',
-      ['Runs After 20', '20+ Innings (Co...', 'Runs After 50', '50+ Innings (Co...'],
+      'Average runs scored beyond 20 and beyond 50 — how deep does the innings go once set?',
+      ['Runs After 20', '20+ Count', 'Runs After 50', '50+ Count'],
+      ['≥ 25', '', '≥ 40', ''],
       yi => {
         const d = depRows[yi];
-        return [
-          d.ra20 !== null ? d.ra20 : '-',
-          d.c20,
-          d.ra50 !== null ? d.ra50 : '-',
-          d.c50
-        ];
+        return [d.ra20 !== null ? d.ra20 : '-', d.c20, d.ra50 !== null ? d.ra50 : '-', d.c50];
       },
       (yi, ci) => {
-        if (ci === 0) return heatBg(depRows[yi].ra20, depRa20Lo, depRa20Hi);
-        if (ci === 2) return heatBg(depRows[yi].ra50, depRa50Lo, depRa50Hi);
-        return '#1a1d2e';
-      }
+        if (ci === 0) {
+          const v = depRows[yi].ra20;
+          return v === null ? '#1a1d2e' : v >= 25 ? 'rgba(39,174,96,0.82)' : v >= 15 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        }
+        if (ci === 2) {
+          const v = depRows[yi].ra50;
+          return v === null ? '#1a1d2e' : v >= 40 ? 'rgba(39,174,96,0.82)' : v >= 20 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.82)';
+        }
+        return 'rgba(100,110,140,0.25)'; // count columns: neutral, no threshold
+      },
+      `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Average extra runs scored beyond the milestone. RA20 shows how deep a settled innings goes; RA50 shows finishing quality. Count columns show sample size.</div>`
     ) +
-    makeCustomTable(
+    makeRbTable(
       'Reliability → Batting Average & Not-Out %',
       'Average, not-out rate and retired-hurt rate per period',
       ['Batting Avg', 'Not Out %', 'Retired Hurt %'],
+      ['', '', ''],
       yi => [relRows[yi].avg, relRows[yi].no + '%', relRows[yi].rh + '%'],
       (yi, ci) => {
         if (ci === 0) return heatBg(relRows[yi].avg, relAvgLo, relAvgHi);
-        if (ci === 1) return heatBg(relRows[yi].no,  0, relNoHi || 1);
+        if (ci === 1) {
+          const v = relRows[yi].no;
+          return v >= 20 ? 'rgba(39,174,96,0.82)' : v > 0 ? 'rgba(240,160,64,0.82)' : '#1a1d2e';
+        }
+        if (ci === 2) {
+          const v = relRows[yi].rh;
+          return v > 0 ? 'rgba(240,160,64,0.82)' : '#1a1d2e';
+        }
         return '#1a1d2e';
-      }
+      },
+      `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Avg is relative across your own periods — green = strongest. Not Out % ≥20% inflates avg slightly, which is fine for the team. Retired Hurt = orange, not a batting failure.</div>`
     );
 
 
