@@ -81,29 +81,81 @@
 
     /* ── Print / PDF styles ── */
     @media print {
-      @page { margin: 14mm 12mm; size: A4 landscape; }
-      body { background: #fff !important; color: #111 !important; font-size: 11px; }
-      .header { display: none !important; }
-      .sidebar { display: none !important; }
-      .sidebar-backdrop { display: none !important; }
-      .rightpane { display: none !important; }
-      .shell { height: auto !important; overflow: visible !important; }
-      .main { overflow: visible !important; }
-      .content { max-width: 100% !important; padding: 0 !important; }
-      .stat-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important; break-inside: avoid; }
-      .chart-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important; break-inside: avoid; page-break-inside: avoid; }
+      @page { margin: 12mm 10mm; size: A4 landscape; }
+
+      /* ── Base ── */
+      body { background: #fff !important; color: #111 !important; font-size: 10px; }
+
+      /* ── Hide all chrome ── */
+      .header, .sidebar, .sidebar-backdrop, .rightpane,
+      #achFab, #achDrawer, #achDrawerBackdrop,
+      .hamburger, .btn-pdf, button { display: none !important; }
+
+      /* ── Layout reset ── */
+      .shell  { height: auto !important; overflow: visible !important; display: block !important; }
+      .main   { overflow: visible !important; width: 100% !important; }
+      .content { max-width: 100% !important; padding: 0 !important; overflow: visible !important; }
+
+      /* ── Tab sections: each on a new page with a printed title ── */
+      [id^="tab-"] {
+        display: block !important;
+        page-break-before: always;
+        padding-top: 6px;
+      }
+      #tab-stats { page-break-before: auto; }   /* first section — no leading break */
+
+      /* Section headings injected via CSS */
+      [id^="tab-"]::before {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #333;
+        border-bottom: 2px solid #f0a040;
+        padding-bottom: 3px;
+        margin-bottom: 8px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      #tab-stats::before        { content: 'Batting — Career Summary'; }
+      #tab-overview::before     { content: 'Batting — Overview'; }
+      #tab-position::before     { content: 'Batting — Position Analysis'; }
+      #tab-league::before       { content: 'Batting — League Breakdown'; }
+      #tab-phase::before        { content: 'Batting — Phase Analysis'; }
+      #tab-consistency::before  { content: 'Batting — Consistency'; }
+      #tab-bowl-overview::before { content: 'Bowling — Overview'; }
+      #tab-bowl-league::before  { content: 'Bowling — League Breakdown'; }
+      #tab-bowl-phase::before   { content: 'Bowling — Phase Analysis'; }
+      #tab-rawdata::before      { content: 'Raw Data'; }
+
+      /* ── Stat card grids ── */
+      .stat-cards  { grid-template-columns: repeat(7, 1fr) !important; gap: 4px !important; }
+      /* dynamically built cards (inline style) */
+      #statCards   { grid-template-columns: repeat(5, 1fr) !important; gap: 4px !important; }
+      #statCards > div {
+        background: #f5f5f5 !important;
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+      }
+      .stat-card   { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important; break-inside: avoid; }
+      .stat-label  { color: #555 !important; }
+      .stat-value  { color: #b05000 !important; }
+
+      /* ── Chart cards ── */
+      .chart-card  { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #111 !important;
+                     break-inside: avoid; page-break-inside: avoid; }
       .chart-title { color: #111 !important; }
-      .stat-label { color: #555 !important; }
-      .stat-value { color: #b05000 !important; }
-      /* Show all tabs in print mode */
-      [id^="tab-"] { display: block !important; margin-bottom: 16px; }
-      canvas { max-width: 100% !important; }
-      /* hide interactive controls */
-      .hamburger { display: none !important; }
-      .btn-pdf { display: none !important; }
-      .rd-table { color: #111 !important; }
-      .rd-table th { color: #555 !important; }
-      .rd-table tbody tr { border-color: #ddd !important; }
+      .row { margin-bottom: 8px !important; gap: 8px !important; }
+      canvas { max-width: 100% !important; max-height: 220px !important; }
+
+      /* ── Tables ── */
+      .rd-table            { color: #111 !important; width: 100% !important; font-size: 0.68rem !important; }
+      .rd-table th         { color: #555 !important; background: #ebebeb !important; font-size: 0.65rem !important; }
+      .rd-table td         { padding: 3px 6px !important; }
+      .rd-table tbody tr   { border-color: #ddd !important; }
+      table                { table-layout: auto !important; }
+
+      /* ── Bowl hauls grid ── */
+      #bowlHauls { grid-template-columns: repeat(3, 1fr) !important; }
     }
 
     /* ── Layout shell ── */
@@ -764,13 +816,18 @@ function exportPDF() {
     if (t.style.display === 'none') { hidden.push(t); t.style.display = ''; }
   });
 
-  // 3. Give charts a tick to paint, then open print dialog
+  // 3. Set document title so the PDF filename / header shows the player name
+  const prevTitle = document.title;
+  document.title = 'Suganth — Cricket Dashboard';
+
+  // 4. Give charts a tick to paint, then open print dialog
   requestAnimationFrame(() => {
     setTimeout(() => {
       window.print();
-      // 4. Restore hidden tabs after dialog closes
+      // 5. Restore hidden tabs and title after dialog closes
       hidden.forEach(t => { t.style.display = 'none'; });
-    }, 300);
+      document.title = prevTitle;
+    }, 400);
   });
 }
 
@@ -4225,7 +4282,6 @@ function initRawData(rawData) {
     ['4s',             '4s',          'right'],
     ['6s',             '6s',          'right'],
     ['Dismissal Type', 'How Out',     'left'],
-    ['Scorecard Link', 'Scorecard',   'center'],
   ];
   const BOWL_COLS = [
     ['Match Date',  'Date',       'left'],
@@ -4239,7 +4295,6 @@ function initRawData(rawData) {
     ['WD',          'Wd',        'right'],
     ['NoB',         'NB',        'right'],
     ['HAT',         'Hat',       'center'],
-    ['Scorecard Link', 'Scorecard', 'center'],
   ];
 
   // Map table row index to _globalData index for editing
@@ -4248,7 +4303,6 @@ function initRawData(rawData) {
     cols.forEach(([,lbl,align]) => {
       html += `<th style="text-align:${align}">${lbl}</th>`;
     });
-    html += '<th style="text-align:center">Edit</th>';
     html += '</tr></thead><tbody>';
     data.forEach((r, idx) => {
       const globalIdx = globalIndexes ? globalIndexes[idx] : idx;
@@ -4279,15 +4333,7 @@ function initRawData(rawData) {
           }
         }
       });
-      // Edit/Save/Cancel buttons
-      if (isEditing) {
-        html += `<td style="text-align:center">
-          <button onclick="saveRawDataRow(${globalIdx})" style="background:#52c41a;border:none;color:#fff;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:0.7rem;margin-right:4px">Save</button>
-          <button onclick="cancelRawDataRow()" style="background:#888;border:none;color:#fff;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:0.7rem">Cancel</button>
-        </td>`;
-      } else {
-        html += `<td style="text-align:center"><button onclick="editRawDataRow(${globalIdx})" style="background:#4e9af1;border:none;color:#fff;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:0.7rem">Edit</button></td>`;
-      }
+
       html += '</tr>';
     });
     html += '</tbody></table></div>';
