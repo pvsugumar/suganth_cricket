@@ -1017,26 +1017,28 @@ function init(rawData) {
   `;
 
   /* stat cards */
+  const settled   = c50 + c75 + c100;               // innings reaching 50+
+  const settledPct = pct(settled, innings);
   [
-    { label:'Matches',     val: matches,                      sub: '' },
-    { label:'Innings',     val: innings,                      sub: `${dnb} DNB` },
-    { label:'Runs',        val: totalRuns.toLocaleString(),   sub: '' },
-    { label:'Avg',         val: careerAVG,                    sub: `NO ${notOuts}` },
-    { label:'SR',          val: careerSR,                     sub: '' },
-    { label:'Highest',     val: highScore,                    sub: '' },
-    { label:"25's",        val: c25,                          sub: `${pct(c25,innings)}%` },
-    { label:"50's",        val: c50,                          sub: `${pct(c50,innings)}%` },
-    { label:"75's",        val: c75,                          sub: `${pct(c75,innings)}%` },
-    { label:"100's",       val: c100,                         sub: `${convPct}% conv` },
-    { label:'4s',          val: fours,                        sub: '' },
-    { label:'6s',          val: sixes,                        sub: '' },
-    { label:'Boundary%',   val: boundaryPct+'%',              sub: `${boundaryRuns} runs` },
-    { label:'Not Out%',    val: notOutPct+'%',                sub: `${notOuts} times` },
+    { label:'Matches',     val: matches,                      sub: `${innings} innings`,   color:'#d0d6e8' },
+    { label:'Innings',     val: innings,                      sub: `${dnb} DNB`,           color:'#d0d6e8' },
+    { label:'Runs',        val: totalRuns.toLocaleString(),   sub: `${totalBalls} balls`,  color:'#f0a040' },
+    { label:'Avg',         val: careerAVG,                    sub: `NO ${notOuts}`,         color:'#f0a040' },
+    { label:'SR',          val: careerSR,                     sub: `Dot ${dotPct}%`,        color:'#4e9af1' },
+    { label:'Highest',     val: highScore,                    sub: '',                      color:'#52c41a' },
+    { label:"25's",        val: c25,                          sub: `${pct(c25,innings)}%`,  color:'#f5c842' },
+    { label:"50's",        val: c50,                          sub: `${pct(c50,innings)}%`,  color:'#a855f7' },
+    { label:"75's",        val: c75,                          sub: `${pct(c75,innings)}%`,  color:'#a855f7' },
+    { label:"100's",       val: c100,                         sub: `${convPct}% conv`,      color:'#4cc9c0' },
+    { label:'50+ Innings', val: settled,                      sub: `${settledPct}% of inn`, color:'#52c41a' },
+    { label:'4s',          val: fours,                        sub: `${fours*4} runs`,       color:'#f0803c' },
+    { label:'6s',          val: sixes,                        sub: `${sixes*6} runs`,       color:'#f0803c' },
+    { label:'Boundary%',   val: boundaryPct+'%',              sub: `${boundaryRuns} runs`,  color:'#f0803c' },
   ].forEach(c => {
     const el = document.createElement('div');
     el.style.cssText = 'background:#1e2235;border:1px solid #333a50;border-radius:6px;padding:7px 8px;text-align:center;';
     el.innerHTML = `<div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px">${c.label}</div>
-                    <div style="font-size:1.1rem;font-weight:700;color:#f0a040;line-height:1.2">${c.val}</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:${c.color};line-height:1.2">${c.val}</div>
                     ${c.sub ? `<div style="font-size:0.62rem;color:#7a8499;margin-top:1px">${c.sub}</div>` : ''}`;
     document.getElementById('statCards').appendChild(el);
   });
