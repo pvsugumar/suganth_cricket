@@ -115,89 +115,101 @@
 
     /* ── Right Pane (Achievements) ── */
     .rightpane {
-      width: 210px;
-      min-width: 210px;
+      width: 240px;
+      min-width: 240px;
       background: #0f1220;
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      padding: 14px 10px 20px;
+      padding: 14px 10px 24px;
     }
     @media (max-width: 1200px) { .rightpane { display: none; } }
     .rp-title {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.09em;
       text-transform: uppercase;
       color: #f0a040;
-      margin-bottom: 10px;
-      padding: 0 2px;
+      margin-bottom: 12px;
+      padding: 0 4px;
     }
     .rp-section {
       font-size: 0.6rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin: 10px 0 6px;
-      padding: 0 2px;
+      color: #f0a040;
+      margin: 14px 0 7px;
+      padding: 4px 6px;
+      border-left: 3px solid #f0a040;
+      background: rgba(240,160,64,0.06);
+      border-radius: 0 4px 4px 0;
     }
     .badge {
       border-radius: 7px;
-      padding: 7px 9px;
-      margin-bottom: 5px;
+      padding: 6px 9px;
+      margin-bottom: 4px;
       border: 1px solid;
       position: relative;
     }
     .badge.unlocked {
-      background: rgba(240,160,64,0.05);
-      border-color: rgba(240,160,64,0.4);
+      background: rgba(240,160,64,0.06);
+      border-color: rgba(240,160,64,0.35);
+    }
+    .badge.unlocked.prestige {
+      background: linear-gradient(135deg,rgba(240,160,64,0.12),rgba(255,215,0,0.07));
+      border-color: rgba(255,200,50,0.7);
+      box-shadow: 0 0 8px rgba(240,160,64,0.18);
     }
     .badge.locked {
-      background: #1a1d2e;
-      border-color: #2a3050;
-      opacity: 0.75;
+      background: #141728;
+      border-color: #252a40;
+      opacity: 0.65;
     }
     .badge-name {
-      font-size: 0.66rem;
-      font-weight: 700;
-      color: #d0d6e8;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #c8d0e4;
       display: flex;
       align-items: center;
       gap: 5px;
     }
-    .badge.unlocked .badge-name { color: #e8ddcc; }
-    .badge-icon { font-size: 0.85rem; }
+    .badge.unlocked .badge-name { color: #ecdec8; }
+    .badge.unlocked.prestige .badge-name { color: #ffe9a0; }
+    .badge-icon { font-size: 0.82rem; line-height: 1; }
     .badge-check {
       margin-left: auto;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       color: #52c41a;
-      font-weight: 700;
+      font-weight: 900;
     }
+    .badge.prestige .badge-check { color: #f5c842; }
     .badge-date {
-      font-size: 0.58rem;
+      font-size: 0.57rem;
       color: #7a8499;
       margin-top: 2px;
       padding-left: 1px;
     }
     .badge-prog-wrap {
-      margin-top: 5px;
-      background: #222740;
+      margin-top: 4px;
+      background: #1e2240;
       border-radius: 3px;
-      height: 5px;
+      height: 4px;
       overflow: hidden;
     }
     .badge-prog-fill {
       height: 100%;
-      background: linear-gradient(90deg,#f0a040,#e06010);
       border-radius: 3px;
-      transition: width 0.4s;
+      transition: width 0.5s ease;
     }
+    .badge-prog-fill.near  { background: linear-gradient(90deg,#52c41a,#3da012); }
+    .badge-prog-fill.mid   { background: linear-gradient(90deg,#f0a040,#e06010); }
+    .badge-prog-fill.early { background: linear-gradient(90deg,#4e9af1,#2d7ae0); }
     .badge-prog-label {
-      font-size: 0.58rem;
-      color: #7a8499;
-      margin-top: 3px;
+      font-size: 0.56rem;
+      color: #6a7490;
+      margin-top: 2px;
     }
 
     /* ── Raw Data Table ── */
@@ -392,6 +404,7 @@
       .content { padding: 8px 8px; }
       #phRow1, #phRow2, #phRbRow1, #phRbRow2 { grid-template-columns: 1fr !important; }
       #phRow1 > *, #phRow2 > *, #phRbRow1 > *, #phRbRow2 > * { min-width: 0; }
+      #statsFormRow, #statsMainRow { grid-template-columns: 1fr !important; }
     }
 
     /* ── Small mobile (≤480px) ── */
@@ -403,11 +416,92 @@
       .row, .row-2, .row-3, [id^="bowlCards"] { grid-template-columns: 1fr !important; }
       .stat-card, .chart-card { width: 100% !important; min-width: 0 !important; }
       .chart-card canvas { max-width: 100%; }
+      #bowlHauls { grid-template-columns: repeat(3, 1fr) !important; }
     }
 
     /* ── No horizontal scroll on body ── */
     body { overflow-x: hidden; }
     .shell { overflow-x: hidden; }
+
+    /* ── Achievements FAB (mobile only) ── */
+    #achFab {
+      display: none;
+      position: fixed;
+      bottom: 22px;
+      right: 18px;
+      z-index: 1200;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#f0a040,#e06010);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(240,120,0,0.45);
+      font-size: 1.4rem;
+      line-height: 52px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #achFab:active { transform: scale(0.92); }
+    @media (max-width: 1200px) { #achFab { display: block; } }
+
+    /* ── Achievements Drawer ── */
+    #achDrawer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 1300;
+      background: #0f1220;
+      border-top: 2px solid #f0a040;
+      border-radius: 16px 16px 0 0;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 0 14px 30px;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(.4,0,.2,1);
+    }
+    #achDrawer.open { transform: translateY(0); }
+    #achDrawerHandle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 2px 10px;
+      position: sticky;
+      top: 0;
+      background: #0f1220;
+      z-index: 1;
+      border-bottom: 1px solid #1e2440;
+      margin-bottom: 8px;
+    }
+    #achDrawerTitle {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #f0a040;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    #achDrawerClose {
+      background: none;
+      border: 1px solid #333a50;
+      color: #7a8499;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    #achDrawerClose:hover { color: #d0d6e8; border-color: #555e80; }
+    #achDrawerBackdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1299;
+      background: rgba(10,12,24,0.65);
+    }
+    /* Drawer badge layout: 2 columns on wider phones */
+    @media (min-width: 500px) {
+      #achDrawerBody { columns: 2; column-gap: 10px; }
+      #achDrawerBody .badge { break-inside: avoid; }
+      #achDrawerBody .rp-section { column-span: all; }
+    }
   </style>
 <script>
 // Global variables for tab state and data
@@ -419,8 +513,6 @@ const TAB_IDS = [
   'stats', 'overview', 'position', 'league', 'phase', 'consistency',
   'bowl-overview', 'bowl-league', 'bowl-phase', 'rawdata'
 ];
-
-// ...existing code...
 
 function showTab(name, linkEl) {
   TAB_IDS.forEach(id => {
@@ -466,9 +558,7 @@ function showTab(name, linkEl) {
       <a class="header-cc-link" href="https://cricclubs.com/CricketofSanAntonio/viewPlayer.do?playerId=3682166&amp;clubId=6845" target="_blank" rel="noopener">
         🌐 CricClubs Profile <span style="color:#7a8499;font-size:0.8em;margin-left:7px;">(ID: 3682166)</span>
       </a>
-    <!-- Removed Load CSV button and file input -->
-    <!-- Removed Load from Google Sheet button -->
-    <!-- Toast will be injected at the end of body -->
+
     <div class="header-meta" id="headerMeta">Loading…</div>
   </div>
 </div>
@@ -477,9 +567,7 @@ function showTab(name, linkEl) {
 
   <!-- ══ Sidebar ══ -->
   <nav class="sidebar" id="sidebar">
-    <!-- sidebar-backdrop moved below -->
-    <!-- Player mini-card and sidebar links go here (rest of sidebar content) -->
-    <!-- Player mini-card removed as requested -->
+
     <div class="sidebar-section">
       <a href="#" onclick="showTab('stats',this);return false;" style="margin:0 6px 8px;display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(240,160,64,0.1);border:1px solid rgba(240,160,64,0.3);border-radius:7px;color:#f0a040;font-size:0.78rem;font-weight:700;text-decoration:none" class="active">📋 Overall Stats</a>
     </div>
@@ -535,6 +623,19 @@ function showTab(name, linkEl) {
 
 </div><!-- /shell -->
 
+<!-- ══ Achievements FAB ══ -->
+<button id="achFab" aria-label="Open Achievements" title="Achievements">🏅</button>
+
+<!-- ══ Achievements Drawer (mobile) ══ -->
+<div id="achDrawerBackdrop"></div>
+<div id="achDrawer" role="dialog" aria-label="Achievements">
+  <div id="achDrawerHandle">
+    <span id="achDrawerTitle">🏅 Achievements</span>
+    <button id="achDrawerClose">Close ×</button>
+  </div>
+  <div id="achDrawerBody"></div>
+</div>
+
 <script>
 // Sidebar and header logic (runs after DOM is loaded)
 window.addEventListener('DOMContentLoaded', function() {
@@ -586,25 +687,48 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // ── Achievements FAB + Drawer ──
+  const achFab      = document.getElementById('achFab');
+  const achDrawer   = document.getElementById('achDrawer');
+  const achBackdrop = document.getElementById('achDrawerBackdrop');
+  const achClose    = document.getElementById('achDrawerClose');
+  const achBody     = document.getElementById('achDrawerBody');
+
+  function openAchDrawer() {
+    // Sync content from right pane if data is loaded
+    const rpContent = document.getElementById('rp-content');
+    if (rpContent && rpContent.innerHTML && !rpContent.innerHTML.includes('Loading')) {
+      achBody.innerHTML = rpContent.innerHTML;
+    } else {
+      achBody.innerHTML = '<div style="color:#7a8499;font-size:0.78rem;padding:20px 4px">Load data first to see achievements.</div>';
+    }
+    achDrawer.classList.add('open');
+    achBackdrop.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAchDrawer() {
+    achDrawer.classList.remove('open');
+    achBackdrop.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (achFab)      achFab.addEventListener('click', openAchDrawer);
+  if (achClose)    achClose.addEventListener('click', closeAchDrawer);
+  if (achBackdrop) achBackdrop.addEventListener('click', closeAchDrawer);
+  // Close on Escape key
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAchDrawer(); });
 });
 </script>
 
 <script>
-/* ── Error trap (remove after debugging) ── */
-window.onerror = function(msg, src, line, col, err) {
-  const app = document.getElementById('app');
-  if (app) app.innerHTML = '<pre style="color:#ff6b6b;background:#1a1d2e;padding:16px;border-radius:8px;font-size:12px;white-space:pre-wrap">'
-    + 'JavaScript Error:\n' + msg + '\nLine: ' + line + '\n\n' + (err ? err.stack : '') + '</pre>';
-  return false;
-};
-
 /* ── Chart.js globals ── */
 Chart.defaults.color = '#7a8499';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
 Chart.defaults.font.family = "'Segoe UI', Tahoma, sans-serif";
 Chart.defaults.font.size = 11;
 
-/* ── renamed: overview init ── */
 function initOverview(rawData) { init(rawData); }
 
 /* ── PDF Export ── */
@@ -649,8 +773,6 @@ function exportPDF() {
     }, 300);
   });
 }
-
-// Removed file input event listener since Google Sheets is used as input.
 
 /* ══════════════════════════════════════
    HELPERS
@@ -874,6 +996,24 @@ function init(rawData) {
         <div style="position:relative;height:300px"><canvas id="cYearVol"></canvas></div>
       </div>
     </div>
+
+    <!-- ── ROW 5: Win Contribution | Seasonal Trend ── -->
+    <div class="row-3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+        <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
+          Win vs Loss Performance
+          <small style="color:#7a8499;font-weight:400;margin-left:6px">avg &amp; SR split by match result</small>
+        </div>
+        <div style="position:relative;height:280px"><canvas id="cWinContrib"></canvas></div>
+      </div>
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
+        <div style="font-size:0.82rem;font-weight:600;color:#d0d6e8;margin-bottom:8px;">
+          Seasonal Trend (Half-Year)
+          <small style="color:#7a8499;font-weight:400;margin-left:6px">avg per half-year + SR trend</small>
+        </div>
+        <div style="position:relative;height:280px"><canvas id="cSeasonal"></canvas></div>
+      </div>
+    </div>
   `;
 
   /* stat cards */
@@ -910,6 +1050,8 @@ function init(rawData) {
   renderForm(last10, last10Avg, careerAVG);
   renderInnings(bat, careerAVG);
   renderYearVol(years, yearRuns, yearInnings, yearAvgs, careerAVG);
+  renderWinContrib(bat);
+  renderSeasonalTrend(bat);
 }
 
 /* ══════════════════════════════════════
@@ -924,6 +1066,9 @@ function renderRuns(bat, rolling10) {
   const runs   = bat.map(r=>safeNum(r['Runs']));
   const labels = bat.map((_,i)=>i+1);
   const colors = runs.map(v=> v>=100?'#a855f7': v>=50?'#52c41a': v>=30?'#f0803c':'#4e9af1');
+  const roll10Valid = rolling10.filter(v => v !== null && v !== undefined);
+  const dataMax = Math.max(...runs, ...(roll10Valid.length ? roll10Valid : [0]));
+  const yMax = Math.ceil(dataMax / 25) * 25 + 25; // round up to next 25, add one step buffer
 
   new Chart(document.getElementById('cRuns'), {
     type: 'bar',
@@ -947,12 +1092,12 @@ function renderRuns(bat, rolling10) {
       },
       scales:{
         x:{ grid:{display:false}, ticks:{display:false}, border:{display:false} },
-        y:{ 
-          grid:{color:'rgba(255,255,255,0.06)'}, 
-          border:{display:false}, 
+        y:{
+          grid:{color:'rgba(255,255,255,0.06)'},
+          border:{display:false},
           min: 0,
-          max: 200,
-          ticks:{stepSize:25, maxTicksLimit:10} 
+          max: yMax,
+          ticks:{stepSize:25, maxTicksLimit:10}
         }
       }
     },
@@ -979,6 +1124,10 @@ function renderRuns(bat, rolling10) {
 ══════════════════════════════════════ */
 function renderCareer(bat, cumAVG, cumSR, rolling10) {
   const labels = bat.map((_,i)=>i+1);
+  const validAvg = [...cumAVG, ...rolling10].filter(v => v !== null && v !== undefined);
+  const validSR  = cumSR.filter(v => v !== null && v !== undefined);
+  const yLMax = Math.ceil(Math.max(...validAvg, 0) / 10) * 10 + 10;
+  const yRMax = Math.ceil(Math.max(...validSR, 0) / 25) * 25 + 25;
   new Chart(document.getElementById('cCareer'), {
     type:'line',
     data:{
@@ -1004,13 +1153,13 @@ function renderCareer(bat, cumAVG, cumSR, rolling10) {
           ticks:{maxTicksLimit:10,callback(v,i){return i%10===0?this.getLabelForValue(v):'';}} },
          yL:{ type:'linear', position:'left',  grid:{color:'rgba(255,255,255,0.06)'}, border:{display:false},
            min: 0,
-           max: 100,
+           max: yLMax,
            ticks:{color:'#f0803c',stepSize:10,maxTicksLimit:10},
            title:{display:true,text:'Avg',color:'#f0803c',font:{size:10}} },
          yR:{ type:'linear', position:'right', grid:{display:false}, border:{display:false},
            min: 0,
-           max: 200,
-           ticks:{color:'#4e9af1',stepSize:10,maxTicksLimit:10},
+           max: yRMax,
+           ticks:{color:'#4e9af1',stepSize:25,maxTicksLimit:10},
            title:{display:true,text:'SR',color:'#4e9af1',font:{size:10}} }
        }
     }
@@ -1440,9 +1589,169 @@ function renderYearVol(years, yearRuns, yearInnings, yearAvgs, careerAVG) {
   });
 }
 
-// ...existing code...
+/* ══════════════════════════════════════
+   New Overview Charts
+══════════════════════════════════════ */
 
-/* ── Load from embedded data immediately ── */
+/* 9. Win vs Loss Performance */
+function renderWinContrib(bat) {
+  const isWin  = r => r['Winner'] && r['Team'] && r['Winner'] === r['Team'];
+  const isLoss = r => r['Winner'] && r['Team'] && r['Winner'] !== r['Team']
+                   && r['Winner'] !== 'No Winner' && r['Winner'] !== 'Draw';
+  const isDraw = r => r['Winner'] === 'Draw' || r['Winner'] === 'No Winner';
+
+  const groups = ['Win', 'Loss', 'Draw'];
+  const filters = [isWin, isLoss, isDraw];
+
+  const avgs = filters.map(fn => {
+    const rows = bat.filter(fn);
+    const dis  = rows.filter(r => isDismissed(r));
+    return dis.length ? +(rows.reduce((s,r)=>s+safeNum(r['Runs']),0) / dis.length).toFixed(1) : 0;
+  });
+  const srs = filters.map(fn => {
+    const rows = bat.filter(fn);
+    const b    = rows.reduce((s,r)=>s+safeNum(r['Balls']),0);
+    return b ? +(rows.reduce((s,r)=>s+safeNum(r['Runs']),0) / b * 100).toFixed(1) : 0;
+  });
+  const inns = filters.map(fn => bat.filter(fn).length);
+
+  const colors = ['rgba(39,174,96,0.82)', 'rgba(231,76,60,0.82)', 'rgba(150,150,180,0.72)'];
+
+  new Chart(document.getElementById('cWinContrib'), {
+    type: 'bar',
+    data: {
+      labels: groups,
+      datasets: [
+        { label: 'Avg', data: avgs, backgroundColor: colors,
+          borderRadius: 5, yAxisID: 'yAvg' },
+        { type: 'line', label: 'SR', data: srs, borderColor: '#4e9af1',
+          backgroundColor: 'rgba(78,154,241,0.1)', tension: 0.3,
+          pointRadius: 6, pointBackgroundColor: '#4e9af1', borderWidth: 2,
+          fill: true, yAxisID: 'ySR' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: true, position: 'top',
+          labels: { boxWidth: 12, padding: 10, color: '#8a90a8', font: { size: 11 } } },
+        tooltip: { ...TOOLTIP, callbacks: {
+          afterTitle: (items) => `  Innings: ${inns[items[0].dataIndex]}`,
+          label: ctx => ctx.dataset.label === 'Avg'
+            ? `  Avg: ${ctx.raw}`
+            : `  SR: ${ctx.raw}`
+        }}
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { color: '#8a90a8' } },
+        yAvg: { type: 'linear', position: 'left',
+                grid: { color: 'rgba(255,255,255,0.06)' }, border: { display: false },
+                suggestedMin: 0,
+                ticks: { color: '#f5c842', maxTicksLimit: 6 },
+                title: { display: true, text: 'Avg', color: '#f5c842', font: { size: 10 } } },
+        ySR: { type: 'linear', position: 'right',
+               grid: { display: false }, border: { display: false },
+               suggestedMin: 0,
+               ticks: { color: '#4e9af1', maxTicksLimit: 6 },
+               title: { display: true, text: 'SR', color: '#4e9af1', font: { size: 10 } } }
+      }
+    },
+    plugins: [{
+      id: 'wlLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          if (!avgs[i]) return;
+          ctx.save();
+          ctx.fillStyle = '#d0d6e8';
+          ctx.font = '10px Segoe UI';
+          ctx.textAlign = 'center';
+          ctx.fillText(avgs[i], bar.x, bar.y - 6);
+          ctx.restore();
+        });
+      }
+    }]
+  });
+}
+
+/* 10. Seasonal Trend (half-year buckets) */
+function renderSeasonalTrend(bat) {
+  const parseHalf = r => {
+    if (!r['Match Date']) return null;
+    const d = new Date(r['Match Date']);
+    if (isNaN(d)) return null;
+    return `${d.getFullYear()} ${d.getMonth() < 6 ? 'H1' : 'H2'}`;
+  };
+
+  const byHalf = {};
+  bat.forEach(r => {
+    const h = parseHalf(r);
+    if (!h) return;
+    if (!byHalf[h]) byHalf[h] = [];
+    byHalf[h].push(r);
+  });
+
+  const halves = Object.keys(byHalf).sort();
+  const avgData = halves.map(h => {
+    const rows = byHalf[h];
+    const dis  = rows.filter(r => isDismissed(r));
+    return dis.length ? +(rows.reduce((s,r)=>s+safeNum(r['Runs']),0) / dis.length).toFixed(1) : null;
+  });
+  const srData = halves.map(h => {
+    const rows = byHalf[h];
+    const b    = rows.reduce((s,r)=>s+safeNum(r['Balls']),0);
+    return b ? +(rows.reduce((s,r)=>s+safeNum(r['Runs']),0) / b * 100).toFixed(1) : null;
+  });
+  const innsData = halves.map(h => byHalf[h].length);
+
+  const avgMax = Math.ceil(Math.max(...avgData.filter(Boolean), 1) / 10) * 10 + 10;
+  const srMax  = Math.ceil(Math.max(...srData.filter(Boolean),  1) / 25) * 25 + 25;
+
+  new Chart(document.getElementById('cSeasonal'), {
+    type: 'bar',
+    data: {
+      labels: halves,
+      datasets: [
+        { label: 'Avg', data: avgData, backgroundColor: avgData.map(v =>
+            v >= 40 ? 'rgba(39,174,96,0.82)' : v >= 20 ? 'rgba(240,160,64,0.82)' : 'rgba(231,76,60,0.72)'),
+          borderRadius: 4, yAxisID: 'yAvg' },
+        { type: 'line', label: 'SR', data: srData, borderColor: '#4e9af1',
+          backgroundColor: 'rgba(78,154,241,0.08)', tension: 0.4,
+          pointRadius: 4, pointBackgroundColor: '#4e9af1', borderWidth: 2,
+          fill: true, yAxisID: 'ySR' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: true, position: 'top',
+          labels: { boxWidth: 12, padding: 10, color: '#8a90a8', font: { size: 11 } } },
+        tooltip: { ...TOOLTIP, callbacks: {
+          afterTitle: (items) => `  Innings: ${innsData[items[0].dataIndex]}`,
+          label: ctx => ctx.dataset.label === 'Avg'
+            ? `  Avg: ${ctx.raw ?? '—'}`
+            : `  SR: ${ctx.raw ?? '—'}`
+        }}
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false },
+             ticks: { color: '#8a90a8', maxRotation: 45, minRotation: 30, font: { size: 10 } } },
+        yAvg: { type: 'linear', position: 'left', min: 0, max: avgMax,
+                grid: { color: 'rgba(255,255,255,0.06)' }, border: { display: false },
+                ticks: { color: '#f5c842', maxTicksLimit: 6 },
+                title: { display: true, text: 'Avg', color: '#f5c842', font: { size: 10 } } },
+        ySR: { type: 'linear', position: 'right', min: 0, max: srMax,
+               grid: { display: false }, border: { display: false },
+               ticks: { color: '#4e9af1', maxTicksLimit: 6 },
+               title: { display: true, text: 'SR', color: '#4e9af1', font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+/* ── Load from Google Sheets CSV ── */
 function loadFromCsvString(csvStr) {
   const result = Papa.parse(csvStr, { header: true, skipEmptyLines: true });
   _globalData = result.data;
@@ -1460,8 +1769,7 @@ function loadFromCsvString(csvStr) {
     showTab(activeTab, null);
   }
   initAchievements(_globalData);
-  const loadStatusEl = document.getElementById('loadStatus');
-  if (loadStatusEl) loadStatusEl.textContent = '✓ Data loaded';
+
 }
 
 /* ══════════════════════════════════════
@@ -1522,20 +1830,120 @@ function initPosition(rawData) {
     : positions[0];
   const bestLabel   = bestPos === 'Opening' ? 'Opening' : 'No.' + bestPos;
 
+  /* ── Composite "Ideal Position" score ── */
+  // Score each qualified position across 5 dimensions, normalise to 0–10 each
+  function posScore(p) {
+    const rows = byPos[p];
+    const inn  = rows.length;
+    if (inn < 3) return 0;
+    const avgV      = parseFloat(avg(rows))  || 0;
+    const srV       = parseFloat(sr(rows))   || 0;
+    const ci        = rows.filter(r => safeNum(r['Runs']) >= 20).length / inn * 100; // consistency %
+    const milestones= rows.filter(r => safeNum(r['Runs']) >= 50).length / inn * 100; // 50+ %
+    const duckRate  = rows.filter(r => safeNum(r['Runs']) === 0 && isDismissed(r)).length / inn * 100;
+    const dotV      = (() => { const b=rows.reduce((s,r)=>s+safeNum(r['Balls']),0);
+                               const z=rows.reduce((s,r)=>s+safeNum(r['0s']),0);
+                               return b ? z/b*100 : 50; })();
+    return avgV * 0.30 + srV * 0.20 + ci * 0.25 + milestones * 0.30 - duckRate * 0.40 - dotV * 0.15;
+  }
+  const scores     = qualified.map(p => ({ p, score: posScore(p) })).sort((a,b) => b.score - a.score);
+  const idealPos   = scores[0]?.p ?? bestPos;
+  const idealLabel = idealPos === 'Opening' ? 'Opening' : 'No.' + idealPos;
+  const idealRows  = byPos[idealPos];
+  const idealInn   = idealRows.length;
+  const idealAvg   = avg(idealRows);
+  const idealSR    = sr(idealRows);
+  const idealCI    = Math.round(idealRows.filter(r => safeNum(r['Runs']) >= 20).length / idealInn * 100);
+  const idealMile  = Math.round(idealRows.filter(r => safeNum(r['Runs']) >= 50).length / idealInn * 100);
+  const idealDucks = idealRows.filter(r => safeNum(r['Runs']) === 0 && isDismissed(r)).length;
+  const idealHS    = Math.max(...idealRows.map(r => safeNum(r['Runs'])));
+
+  // Verdict label
+  const verdict = (() => {
+    if (idealPos === 'Opening' || idealPos <= 3) return 'Top-Order Anchor';
+    if (idealPos <= 5)  return 'Middle-Order Backbone';
+    if (idealPos <= 7)  return 'Lower Middle-Order Finisher';
+    return 'Tail-End Contributor';
+  })();
+
+  // Runner-up position
+  const runnerUp = scores[1];
+  const runnerLabel = runnerUp ? (runnerUp.p === 'Opening' ? 'Opening' : 'No.' + runnerUp.p) : null;
+
   const container = document.getElementById('tab-position');
   container.innerHTML = `
     <!-- summary cards -->
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-bottom:12px" id="posCards"></div>
 
-    <!-- banner: best role -->
-    <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:9px 16px;
-                margin-bottom:12px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;font-size:0.78rem;">
-      <span>🎯 <b style="color:#d0d6e8">Best Position (avg):</b>
-        <span style="color:#f0a040;font-weight:700"> ${bestLabel} — Avg ${avg(byPos[bestPos])}, SR ${sr(byPos[bestPos])}</span></span>
-      <span>📊 <b style="color:#d0d6e8">Positions Batted:</b>
-        <span style="color:#4e9af1;font-weight:700">${positions.length} (${posLabels.join(', ')})</span></span>
-      <span>🏆 <b style="color:#d0d6e8">Top Scorer at ${bestLabel}:</b>
-        <span style="color:#52c41a;font-weight:700">${posHS[positions.indexOf(bestPos)]} runs</span></span>
+    <!-- Ideal Position banner -->
+    <div style="background:linear-gradient(135deg,#1c2240,#1a2035);border:1px solid rgba(240,160,64,0.4);
+                border-radius:10px;padding:14px 18px;margin-bottom:12px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#f0a040;">
+          🏏 Ideal Batting Position
+        </div>
+        <div style="background:rgba(240,160,64,0.15);border:1px solid rgba(240,160,64,0.5);
+                    border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:700;color:#f5c842;">
+          ${idealLabel}
+        </div>
+        <div style="background:rgba(78,154,241,0.12);border:1px solid rgba(78,154,241,0.4);
+                    border-radius:20px;padding:3px 12px;font-size:0.72rem;font-weight:600;color:#4e9af1;">
+          ${verdict}
+        </div>
+        ${runnerLabel ? `<div style="font-size:0.68rem;color:#7a8499;margin-left:auto;">2nd best: <b style="color:#a0a8c0">${runnerLabel}</b></div>` : ''}
+      </div>
+      <!-- 5 metric pills -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">Avg</div>
+          <div style="font-size:1rem;font-weight:700;color:#f0a040;">${idealAvg}</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">SR</div>
+          <div style="font-size:1rem;font-weight:700;color:#4e9af1;">${idealSR}</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">Innings</div>
+          <div style="font-size:1rem;font-weight:700;color:#d0d6e8;">${idealInn}</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">Consistency</div>
+          <div style="font-size:1rem;font-weight:700;color:${idealCI>=50?'#52c41a':idealCI>=30?'#f5c842':'#f0803c'}">${idealCI}%</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">50+ Rate</div>
+          <div style="font-size:1rem;font-weight:700;color:#a855f7;">${idealMile}%</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">Ducks</div>
+          <div style="font-size:1rem;font-weight:700;color:${idealDucks===0?'#52c41a':'#ff6b6b'}">${idealDucks}</div>
+        </div>
+        <div style="background:#1e2440;border-radius:7px;padding:6px 12px;text-align:center;min-width:70px;">
+          <div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;margin-bottom:2px;">High Score</div>
+          <div style="font-size:1rem;font-weight:700;color:#52c41a;">${idealHS}</div>
+        </div>
+      </div>
+      <!-- Position score bar chart (normalised) -->
+      <div style="font-size:0.62rem;font-weight:600;color:#7a8499;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
+        Position Composite Score (avg · SR · consistency · 50+ rate − duck rate − dot%)
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        ${scores.map(({p, score}) => {
+          const lbl  = p === 'Opening' ? 'Opening' : 'No.' + p;
+          const maxS = scores[0].score || 1;
+          const pct  = Math.max(0, Math.round(score / maxS * 100));
+          const isIdeal = p === idealPos;
+          return `<div style="display:flex;align-items:center;gap:8px;font-size:0.68rem;">
+            <div style="width:56px;color:${isIdeal?'#f0a040':'#8a90a8'};font-weight:${isIdeal?'700':'400'};flex-shrink:0;">${lbl}</div>
+            <div style="flex:1;background:#141728;border-radius:3px;height:8px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;border-radius:3px;
+                background:${isIdeal?'linear-gradient(90deg,#f0a040,#f5c842)':'#2d3660'};
+                transition:width 0.5s;"></div>
+            </div>
+            <div style="width:36px;text-align:right;color:${isIdeal?'#f5c842':'#6a7490'};">${Math.round(score)}</div>
+          </div>`;
+        }).join('')}
+      </div>
     </div>
 
     <!-- row 1: avg & SR by position -->
@@ -1593,19 +2001,30 @@ function initPosition(rawData) {
   `;
 
   /* ── Summary cards ── */
-  const top3 = [...positions].sort((a,b) => posRuns[positions.indexOf(b)] - posRuns[positions.indexOf(a)]).slice(0,3);
+  const mostPlayedPos = positions.reduce((x,p) => byPos[p].length > byPos[x].length ? p : x, positions[0]);
+  const bestSRPos     = positions.reduce((x,p) => sr(byPos[p]) > sr(byPos[x]) ? p : x, positions[0]);
+  const mostRunsPos   = positions.reduce((x,p) => posRuns[positions.indexOf(p)] > posRuns[positions.indexOf(x)] ? p : x, positions[0]);
+  const lbl = p => p === 'Opening' ? 'Opening' : 'No.' + p;
+  const totalDucks    = posDucks.reduce((s,v)=>s+v, 0);
+  const total50s      = pos50s.reduce((s,v)=>s+v, 0);
+  const totalBoundary = Math.round((pos4s.reduce((s,v)=>s+v,0)*4 + pos6s.reduce((s,v)=>s+v,0)*6) / Math.max(posRuns.reduce((s,v)=>s+v,0),1)*100);
   [
-    { label:'Positions',   val: positions.length },
-    { label:'Total Innings',val: bat.length },
-    { label:'Most Played', val: (() => { const p = positions.reduce((x,p) => byPos[p].length > byPos[x].length ? p : x, positions[0]); return p === 'Opening' ? 'Opening' : 'No.' + p; })() },
-    { label:'Best Avg Pos', val: bestLabel },
-    { label:'Best SR Pos',  val: (() => { const p = positions.reduce((x,p) => sr(byPos[p]) > sr(byPos[x]) ? p : x, positions[0]); return p === 'Opening' ? 'Opening' : 'No.' + p; })() },
-    { label:'Top Run Pos',  val: (() => { const p = positions.reduce((x,p) => posRuns[positions.indexOf(p)] > posRuns[positions.indexOf(x)] ? p : x, positions[0]); return p === 'Opening' ? 'Opening' : 'No.' + p; })() },
+    { label:'Ideal Position',   val: idealLabel,                      sub: verdict,                                   color:'#f0a040' },
+    { label:'Most Played',      val: lbl(mostPlayedPos),               sub: byPos[mostPlayedPos].length + ' innings',  color:'#d0d6e8' },
+    { label:'Best Avg',         val: lbl(bestPos),                     sub: 'Avg ' + avg(byPos[bestPos]),              color:'#f5c842' },
+    { label:'Best SR',          val: lbl(bestSRPos),                   sub: 'SR ' + sr(byPos[bestSRPos]),              color:'#4e9af1' },
+    { label:'Most Runs',        val: lbl(mostRunsPos),                 sub: posRuns[positions.indexOf(mostRunsPos)].toLocaleString() + ' runs', color:'#52c41a' },
+    { label:'50+ Rate (best)',  val: Math.max(...positions.map(p=>Math.round(byPos[p].filter(r=>safeNum(r['Runs'])>=50).length/byPos[p].length*100))) + '%',
+                                                                        sub: 'at ' + lbl(positions.reduce((x,p)=>Math.round(byPos[p].filter(r=>safeNum(r['Runs'])>=50).length/byPos[p].length*100)>Math.round(byPos[x].filter(r=>safeNum(r['Runs'])>=50).length/byPos[x].length*100)?p:x, positions[0])),
+                                                                        color:'#a855f7' },
+    { label:'Career Ducks',     val: totalDucks,                       sub: Math.round(totalDucks/bat.length*100) + '% duck rate',   color: totalDucks === 0 ? '#52c41a' : '#ff6b6b' },
+    { label:'Boundary Runs %',  val: totalBoundary + '%',              sub: (pos4s.reduce((s,v)=>s+v,0)) + ' fours · ' + (pos6s.reduce((s,v)=>s+v,0)) + ' sixes', color:'#f0803c' },
   ].forEach(c => {
     const el = document.createElement('div');
     el.style.cssText = 'background:#1e2235;border:1px solid #333a50;border-radius:6px;padding:7px 8px;text-align:center;';
-    el.innerHTML = `<div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px">${c.label}</div>
-                    <div style="font-size:1.05rem;font-weight:700;color:#f0a040">${c.val}</div>`;
+    el.innerHTML = `<div style="font-size:0.6rem;color:#7a8499;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px">${c.label}</div>
+                    <div style="font-size:1.0rem;font-weight:700;color:${c.color};line-height:1.2">${c.val}</div>
+                    <div style="font-size:0.58rem;color:#7a8499;margin-top:2px">${c.sub}</div>`;
     document.getElementById('posCards').appendChild(el);
   });
 
@@ -1645,7 +2064,6 @@ function initPosition(rawData) {
 
   // Unified color style: blue for all, highlight best
   const barColors = positions.map(p => p === bestPos ? '#f0a040' : '#4e9af1');
-  const bestSRPos = positions.reduce((x,p) => sr(byPos[p]) > sr(byPos[x]) ? p : x, positions[0]);
   const srBarColors = positions.map(p => p === bestSRPos ? '#4cc9c0' : '#4e9af1');
 
   /* Chart 1 – Avg by Position */
@@ -2152,11 +2570,6 @@ function initPhase(rawData) {
     // Set green threshold for each phase (customize as needed)
     // Add SR range label for Strike Rate table
     let srRanges = ["60–80 / >80 ✓", "75–95 / >95 ✓", "85–120 / >120 ✓"];
-    let srNotes = [
-      "Settling with purpose, avoiding paralysis or reckless start",
-      "Intent converted via rotation + selective boundaries",
-      "Accelerated intent, fitness & bat-speed dependent"
-    ];
     let headCols;
     if (title.startsWith('Strike Rate')) {
       headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${srRanges[idx]}</span></th>`).join('');
@@ -2172,7 +2585,6 @@ function initPhase(rawData) {
     } else {
       headCols = PHASES.map((ph, idx) => `<th style="${TH}">${ph.lbl}</th>`).join('');
     }
-    let customCaption = '';
     // Use cricket cutoffs for color, not relative scaling
     let colorFn = (v, idx) => {
       if (v === null) return '#1a1d2e';
@@ -2214,9 +2626,6 @@ function initPhase(rawData) {
       // Fallback: relative scaling
       return heatBg(v, lo, hi, invert);
     };
-    if (title.startsWith('Dot Ball %')) {
-      customCaption = 'Non-scoring balls by batting phase. Lower values indicate better strike rotation and pressure management.';
-    }
     const rows = halfYears.map((h, yIdx) => {
       const cells = PHASES.map((_, pIdx) => {
         const v   = matrix[yIdx][pIdx];
@@ -2226,7 +2635,6 @@ function initPhase(rawData) {
       }).join('');
       return `<tr><td style="padding:6px 12px;color:#d0d6e8;font-weight:600;white-space:nowrap">${h}</td>${cells}</tr>`;
     }).join('');
-    const shortTitle = title.replace(/ \(.*$/, '');
     let legend = '';
     if (title.startsWith('Strike Rate')) {
       legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>SR tracks scoring intent by phase. Orange = functional but needs lift. Green = controlling the tempo. Early SR matters less than not getting dismissed cheaply.</div>`;
@@ -2235,14 +2643,13 @@ function initPhase(rawData) {
     } else if (title.startsWith('Rotation Rate')) {
       legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>Singles and twos as % of balls faced. High rotation keeps the scoreboard moving without boundary risk — the clearest signal of batting IQ.</div>`;
     } else if (title.startsWith('Boundary Dependency')) {
-      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>% of total runs from fours and sixes. Heavy reliance means one tight spell = scoreboard stagnation.</div><div style='margin-top:3px;font-size:0.71rem;color:#e05252'>⚠ >50% in Early or Middle — fragile against any bowler hitting a good length</div>`;
+      legend = `<div style='margin-top:6px;font-size:0.71rem;color:#7a8499;font-style:italic'>% of total runs from fours and sixes. Heavy reliance means one tight spell = scoreboard stagnation.</div>`;
     }
     return `<div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;">
       <div style="font-size:0.83rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">${title}</div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead>
-            <tr><th colspan="${PHASES.length+1}" style="padding:3px 14px;text-align:right;color:#444;font-size:0.69rem;font-weight:500;border-bottom:1px solid #2a2f44"></th></tr>
             <tr><th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>${headCols}</tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -2263,10 +2670,6 @@ function initPhase(rawData) {
       return { d, p };
     });
   });
-  const disFlat = disMat.flat().filter(v=>v!==null).map(v=>v.p);
-  const disLo = disFlat.length ? Math.min(...disFlat) : 0;
-  const disHi = disFlat.length ? Math.max(...disFlat) : 100;
-
   function makeDisTable() {
     const TH = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
     // Add phase cutoff labels for %
@@ -2298,7 +2701,6 @@ function initPhase(rawData) {
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.79rem">
           <thead>
-
             <tr><th style="padding:6px 12px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:left">Year</th>${headCols}</tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -2480,7 +2882,7 @@ function initPhase(rawData) {
   const EFF_TARGETS = ['≥ 65%', '≥ 60%', '≥ 35%'];
   const TH_RB = 'padding:6px 14px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:center;white-space:nowrap';
 
-  function makeRbTable(title, caption, colHeaders, targets, getRow, getColor, legend='') {
+  function makeRbTable(title, colHeaders, targets, getRow, getColor, legend='') {
     const headCols = colHeaders.map((h, i) =>
       `<th style="${TH_RB}">${h}${targets[i] ? `<br><span style='font-weight:normal;font-size:11px;color:#52c41a'>${targets[i]}</span>` : ''}</th>`
     ).join('');
@@ -2508,7 +2910,6 @@ function initPhase(rawData) {
   document.getElementById('phRbRow1').innerHTML =
     makeRbTable(
       'Opportunity → Starts & Big-Score Frequency',
-      '% of innings reaching each run milestone — how often does a start become something big?',
       OPP_COLS.map(c => c.lbl), OPP_TARGETS,
       yi => oppMat[yi].map(v => v === null ? '-' : v + '%'),
       (yi, ci) => oppColor(oppMat[yi][ci], ci),
@@ -2516,7 +2917,6 @@ function initPhase(rawData) {
     ) +
     makeRbTable(
       'Efficiency — Score Conversion Rate',
-      '% of innings that reached the lower threshold and went on to reach the higher — where do innings stall?',
       EFF_COLS.map(c => c.lbl), EFF_TARGETS,
       yi => effMat[yi].map(v => v === null ? '-' : v + '%'),
       (yi, ci) => effColor(effMat[yi][ci], ci),
@@ -2527,7 +2927,6 @@ function initPhase(rawData) {
   document.getElementById('phRbRow2').innerHTML =
     makeRbTable(
       'Depth → Runs After Milestone (RA20 / RA50)',
-      'Average runs scored beyond 20 and beyond 50 — how deep does the innings go once set?',
       ['Runs After 20', '20+ Count', 'Runs After 50', '50+ Count'],
       ['≥ 25', '', '≥ 40', ''],
       yi => {
@@ -2549,7 +2948,6 @@ function initPhase(rawData) {
     ) +
     makeRbTable(
       'Reliability → Batting Average & Not-Out %',
-      'Average, not-out rate and retired-hurt rate per period',
       ['Batting Avg', 'Not Out %', 'Retired Hurt %'],
       ['', '', ''],
       yi => [relRows[yi].avg, relRows[yi].no + '%', relRows[yi].rh + '%'],
@@ -2969,8 +3367,8 @@ function initStats(rawData) {
   /* ── helpers ── */
   function statRow(label, val, sub) {
     return `<tr>
-      <td style="padding:7px 12px;color:#7a8499;font-size:0.75rem;white-space:nowrap;width:120px;min-width:120px">${label}</td>
-      <td style="padding:7px 12px;color:#d0d6e8;font-weight:600;font-size:0.78rem">${val}</td>
+      <td style="padding:7px 12px;color:#7a8499;font-size:0.75rem;white-space:nowrap;width:140px;min-width:140px">${label}</td>
+      <td style="padding:7px 12px;color:#d0d6e8;font-weight:600;font-size:0.78rem;width:90px;min-width:90px;white-space:nowrap">${val}</td>
       ${sub !== undefined ? `<td style="padding:7px 12px;color:#7a8499;font-size:0.72rem">${sub}</td>` : '<td></td>'}
     </tr>`;
   }
@@ -3112,19 +3510,15 @@ function initStats(rawData) {
   document.getElementById('tab-stats').innerHTML = `
 
     <!-- Form tables row -->
-    <div class="form-tables-row row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div class="stat-card">${card('Batting Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🏏', batFormTable)}</div>
-      <div class="stat-card">${card('Bowling Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🎳', bowlFormTable)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px" id="statsFormRow">
+      <div>${card('Batting Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🏏', batFormTable)}</div>
+      <div>${card('Bowling Form <span style="font-size:0.65rem;font-weight:400;color:#7a8499">— last 10 innings</span>', '🔴', bowlFormTable)}</div>
     </div>
 
-    <style>
-    </style>
-
-    <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="statsMainRow">
 
       <!-- BATTING -->
       <div style="display:flex;flex-direction:column;gap:10px">
-
 
         ${card('Batting — Core', '🏏', tbl([
           statRow('Matches', Math.max(...all.map(r => safeNum(r['Match_Num']))), ''),
@@ -3143,8 +3537,7 @@ function initStats(rawData) {
         ]))}
 
 
-        ${card('Batting — Shot Profile', '🎯', tbl([
-          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs, ${totalBalls ? (total4s/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
+        ${card('Batting — Shot Profile', '🎯', tbl([          statRow('Fours (4s)',     total4s,  `${(total4s*4)} runs, ${totalBalls ? (total4s/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
           statRow('Sixes (6s)',     total6s,  `${(total6s*6)} runs, ${totalBalls ? (total6s/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
           statRow('Threes (3s)',    threes,   `${totalBalls ? (threes/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
           statRow('Twos (2s)',      twos,     `${totalBalls ? (twos/totalBalls*100).toFixed(1) : '0.0'}% of balls`),
@@ -3156,9 +3549,7 @@ function initStats(rawData) {
       </div>
 
       <!-- BOWLING -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        ${card('Bowling — Core', ' 🔴', bowlInns === 0
+      <div style="display:flex;flex-direction:column;gap:10px">        ${card('Bowling — Core', ' 🔴', bowlInns === 0
           ? '<div style="padding:14px;color:#7a8499;font-size:0.78rem">No bowling data found (O &gt; 0)</div>'
           : tbl([
             statRow('Innings Bowled', bowlInns,   ''),
@@ -3550,17 +3941,36 @@ function initAchievements(rawData) {
   const bat = rows.filter(r => r['Dismissal Type'] !== 'DNB' && r['Runs'] !== 'DNB' && r['Runs'] !== '');
   let careerRuns = 0, career4s = 0, career6s = 0, batInnings = 0;
   let pbScore = 0, pbDate = null;
-  let run500Date=null, run1000Date=null, run1500Date=null, run2000Date=null, run2500Date=null, run3000Date=null;
-  let first50Date=null, first100Date=null;
+  let run250Date=null, run500Date=null, run1000Date=null, run1500Date=null,
+      run2000Date=null, run2500Date=null, run3000Date=null;
+  let first25Date=null, first50Date=null, first100Date=null;
+  let fifties=0, fifties5Date=null, fifties10Date=null;
+  let hundreds=0, hundreds2Date=null, hundreds5Date=null;
   let inn25Date=null, inn50Date=null, inn75Date=null, inn100Date=null;
   let first4Date=null, fours50Date=null, fours100Date=null;
   let first6Date=null, sixes25Date=null, sixes50Date=null;
+  let boundaryBlitzDate=null, sixMachineDate=null, finisherDate=null;
+  let duckFreeStreak=0, bestDuckFreeStreak=0, duckFreeStreakDate=null;
+  let b2b50Date=null, prevWas50=false;
   bat.forEach(r => {
     const rr = safeNum(r['Runs']), f4 = safeNum(r['4s']), s6 = safeNum(r['6s']);
+    const balls = safeNum(r['Balls']);
     careerRuns += rr; career4s += f4; career6s += s6; batInnings++;
     if (rr > pbScore) { pbScore = rr; pbDate = r['Match Date']; }
+    if (!first25Date  && rr >= 25)  first25Date  = r['Match Date'];
     if (!first50Date  && rr >= 50)  first50Date  = r['Match Date'];
     if (!first100Date && rr >= 100) first100Date = r['Match Date'];
+    if (rr >= 50 && rr <= 99) {
+      fifties++;
+      if (fifties === 5  && !fifties5Date)  fifties5Date  = r['Match Date'];
+      if (fifties === 10 && !fifties10Date) fifties10Date = r['Match Date'];
+    }
+    if (rr >= 100) {
+      hundreds++;
+      if (hundreds === 2 && !hundreds2Date) hundreds2Date = r['Match Date'];
+      if (hundreds === 5 && !hundreds5Date) hundreds5Date = r['Match Date'];
+    }
+    if (!run250Date  && careerRuns >= 250)  run250Date  = r['Match Date'];
     if (!run500Date  && careerRuns >= 500)  run500Date  = r['Match Date'];
     if (!run1000Date && careerRuns >= 1000) run1000Date = r['Match Date'];
     if (!run1500Date && careerRuns >= 1500) run1500Date = r['Match Date'];
@@ -3571,18 +3981,33 @@ function initAchievements(rawData) {
     if (!inn50Date  && batInnings >= 50)  inn50Date  = r['Match Date'];
     if (!inn75Date  && batInnings >= 75)  inn75Date  = r['Match Date'];
     if (!inn100Date && batInnings >= 100) inn100Date = r['Match Date'];
-    if (!first4Date   && f4 >= 1)       first4Date   = r['Match Date'];
-    if (!fours50Date  && career4s >= 50) fours50Date  = r['Match Date'];
+    if (!first4Date   && f4 >= 1)        first4Date   = r['Match Date'];
+    if (!fours50Date  && career4s >= 50)  fours50Date  = r['Match Date'];
     if (!fours100Date && career4s >= 100) fours100Date = r['Match Date'];
     if (!first6Date   && s6 >= 1)        first6Date   = r['Match Date'];
     if (!sixes25Date  && career6s >= 25)  sixes25Date  = r['Match Date'];
     if (!sixes50Date  && career6s >= 50)  sixes50Date  = r['Match Date'];
+    // Boundary Blitz: 5+ boundaries (4s+6s) in one innings
+    if (!boundaryBlitzDate && (f4 + s6) >= 5) boundaryBlitzDate = r['Match Date'];
+    // Six Machine: 3+ sixes in one innings
+    if (!sixMachineDate && s6 >= 3) sixMachineDate = r['Match Date'];
+    // Finisher: SR ≥ 150 with ≥ 15 balls faced
+    if (!finisherDate && balls >= 15 && rr / balls * 100 >= 150) finisherDate = r['Match Date'];
+    // Duck-free streak
+    if (rr > 0) {
+      duckFreeStreak++;
+      if (duckFreeStreak > bestDuckFreeStreak) { bestDuckFreeStreak = duckFreeStreak; duckFreeStreakDate = r['Match Date']; }
+    } else { duckFreeStreak = 0; }
+    // Back-to-back 50s
+    if (!b2b50Date && rr >= 50 && prevWas50) b2b50Date = r['Match Date'];
+    prevWas50 = rr >= 50;
   });
 
   /* ── Bowling ── */
   const bowl = rows.filter(r => r['O'] && r['O'] !== '' && safeNum(r['O']) > 0);
   let careerWkts = 0, careerBowlBalls = 0;
-  let firstWktDate=null, first3WktDate=null, first5WktDate=null, wkt25Date=null, wkt50Date=null;
+  let firstWktDate=null, first3WktDate=null, first5WktDate=null,
+      wkt25Date=null, wkt50Date=null, wkt75Date=null, wkt100Date=null;
   let firstMaidenDate=null, firstHatDate=null;
   let ov50Date=null, ov100Date=null, ov200Date=null;
   let pbWkts = 0, pbWktDate = null;
@@ -3596,8 +4021,10 @@ function initAchievements(rawData) {
     if (!first5WktDate  && wk >= 5)  first5WktDate  = r['Match Date'];
     if (!firstMaidenDate && m >= 1)  firstMaidenDate = r['Match Date'];
     if (!firstHatDate   && hat >= 1) firstHatDate   = r['Match Date'];
-    if (!wkt25Date && careerWkts >= 25) wkt25Date = r['Match Date'];
-    if (!wkt50Date && careerWkts >= 50) wkt50Date = r['Match Date'];
+    if (!wkt25Date  && careerWkts >= 25)  wkt25Date  = r['Match Date'];
+    if (!wkt50Date  && careerWkts >= 50)  wkt50Date  = r['Match Date'];
+    if (!wkt75Date  && careerWkts >= 75)  wkt75Date  = r['Match Date'];
+    if (!wkt100Date && careerWkts >= 100) wkt100Date = r['Match Date'];
     if (!ov50Date  && careerBowlBalls >= 300)  ov50Date  = r['Match Date'];
     if (!ov100Date && careerBowlBalls >= 600)  ov100Date = r['Match Date'];
     if (!ov200Date && careerBowlBalls >= 1200) ov200Date = r['Match Date'];
@@ -3658,20 +4085,34 @@ function initAchievements(rawData) {
     if (isNaN(p)) return d;
     return p.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   }
+  // Prestigious badges: unlock date shown with gold shimmer
+  const PRESTIGE_BADGES = new Set([
+    'First 100','2nd Century','5th Century',
+    '1000 Runs','2000 Runs','3000 Runs',
+    'First 5-Wkt Haul','First Hat-Trick',
+    '50 Wickets','75 Wickets','100 Wickets',
+    '100 Innings','50 Matches','100 Matches',
+    '10-Innings Streak ≥20','15-Innings Streak ≥20',
+  ]);
+
   function badge(icon, name, unlockDate, target, current, note) {
-    const unlocked = !!unlockDate || (target === null);
+    const unlocked  = !!unlockDate || (target === null);
+    const isPrestige = PRESTIGE_BADGES.has(name);
     if (unlocked) {
+      const cls = 'badge unlocked' + (isPrestige ? ' prestige' : '');
       const sub = (unlockDate ? fmtDate(unlockDate) : '') + (note ? (unlockDate ? ' · ' : '') + note : '');
-      return `<div class="badge unlocked">
-        <div class="badge-name"><span class="badge-icon">${icon}</span>${name}<span class="badge-check">✓</span></div>
+      const checkColor = isPrestige ? '🌟' : '✓';
+      return `<div class="${cls}">
+        <div class="badge-name"><span class="badge-icon">${icon}</span>${name}<span class="badge-check">${checkColor}</span></div>
         ${sub ? `<div class="badge-date">${sub}</div>` : ''}
       </div>`;
     }
     const pct = target ? Math.min(100, Math.round(current / target * 100)) : 0;
+    const fillClass = pct >= 70 ? 'near' : pct >= 35 ? 'mid' : 'early';
     return `<div class="badge locked">
       <div class="badge-name"><span class="badge-icon">${icon}</span>${name}</div>
-      <div class="badge-prog-wrap"><div class="badge-prog-fill" style="width:${pct}%"></div></div>
-      <div class="badge-prog-label">${current} / ${target}</div>
+      <div class="badge-prog-wrap"><div class="badge-prog-fill ${fillClass}" style="width:${pct}%"></div></div>
+      <div class="badge-prog-label">${current} / ${target}${pct >= 70 ? ' — almost there!' : ''}</div>
     </div>`;
   }
   function statBadge(icon, name, value) {
@@ -3683,17 +4124,25 @@ function initAchievements(rawData) {
 
   const html = `
     <div class="rp-section">🏏 Batting Runs</div>
-    ${badge('🥇','First 50', first50Date, 50, pbScore)}
-    ${badge('💯','First 100', first100Date, 100, pbScore)}
-    ${badge('⚡','500 Runs', run500Date, 500, careerRuns)}
-    ${badge('🔥','1000 Runs', run1000Date, 1000, careerRuns)}
+    ${badge('⚡','250 Runs', run250Date, 250, careerRuns)}
+    ${badge('🔥','500 Runs', run500Date, 500, careerRuns)}
+    ${badge('💪','1000 Runs', run1000Date, 1000, careerRuns)}
     ${badge('🚀','1500 Runs', run1500Date, 1500, careerRuns)}
     ${badge('🌠','2000 Runs', run2000Date, 2000, careerRuns)}
-    ${badge('ground','2500 Runs', run2500Date, 2500, careerRuns)}
+    ${badge('🌟','2500 Runs', run2500Date, 2500, careerRuns)}
     ${badge('🏅','3000 Runs', run3000Date, 3000, careerRuns)}
 
-    <div class="rp-section">📋 Batting Innings</div>
+    <div class="rp-section">🎯 Batting Scores</div>
     ${statBadge('📌','Personal Best', pbScore + ' runs · ' + fmtDate(pbDate))}
+    ${badge('🥉','First 25 (QC)', first25Date, 25, pbScore)}
+    ${badge('🥇','First 50', first50Date, 50, pbScore)}
+    ${badge('💯','First 100', first100Date, 100, pbScore)}
+    ${badge('🎯','5 Fifties', fifties5Date, 5, fifties)}
+    ${badge('🎯','10 Fifties', fifties10Date, 10, fifties)}
+    ${badge('👑','2nd Century', hundreds2Date, 2, hundreds)}
+    ${badge('🏆','5th Century', hundreds5Date, 5, hundreds)}
+
+    <div class="rp-section">📋 Batting Innings</div>
     ${badge('🎖️','25 Innings', inn25Date, 25, batInnings)}
     ${badge('🏵️','50 Innings', inn50Date, 50, batInnings)}
     ${badge('💎','75 Innings', inn75Date, 75, batInnings)}
@@ -3707,6 +4156,13 @@ function initAchievements(rawData) {
     ${badge('🌊','25 Career Sixes', sixes25Date, 25, career6s)}
     ${badge('☄️','50 Career Sixes', sixes50Date, 50, career6s)}
 
+    <div class="rp-section">⚡ Special Innings</div>
+    ${badge('🔥','Boundary Blitz (5+ in innings)', boundaryBlitzDate, null, null)}
+    ${badge('🚁','Six Machine (3+ sixes in innings)', sixMachineDate, null, null)}
+    ${badge('💨','Finisher (SR≥150, ≥15 balls)', finisherDate, null, null)}
+    ${badge('🛡️','Back-to-Back Fifties', b2b50Date, null, null)}
+    ${statBadge('🦺','Best Duck-Free Streak', bestDuckFreeStreak + ' innings' + (duckFreeStreakDate ? ' · ' + fmtDate(duckFreeStreakDate) : ''))}
+
     <div class="rp-section">🎳 Bowling Wickets</div>
     ${statBadge('📌','Best Bowling', pbWkts + ' wkts · ' + fmtDate(pbWktDate))}
     ${badge('🎯','First Wicket', firstWktDate, 1, careerWkts > 0 ? 1 : 0)}
@@ -3715,6 +4171,8 @@ function initAchievements(rawData) {
     ${badge('🧊','First Hat-Trick', firstHatDate, 1, 0)}
     ${badge('⭐','25 Wickets', wkt25Date, 25, careerWkts)}
     ${badge('🏆','50 Wickets', wkt50Date, 50, careerWkts)}
+    ${badge('💫','75 Wickets', wkt75Date, 75, careerWkts)}
+    ${badge('👑','100 Wickets', wkt100Date, 100, careerWkts)}
 
     <div class="rp-section">🔄 Bowling Overs</div>
     ${badge('🧵','First Maiden', firstMaidenDate, 1, 0)}
@@ -3915,7 +4373,6 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(csv => { loadFromCsvString(csv); })
     .catch(e => { console.error('Fetch error:', e); showToast('Failed to load data.', 3000); });
 });
-// ...existing code...
 </script>
 
 <!-- Toast Notification -->
