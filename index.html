@@ -523,6 +523,32 @@
       #statsFormRow, #statsMainRow { grid-template-columns: 1fr !important; }
     }
 
+    /* ── Ball-by-Ball sub grid (Milestone + Key Moments) ── */
+    .bbb-sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 0;
+    }
+    .bbb-sub-grid > div:first-child {
+      border-radius: 0 0 0 8px;
+      border-top: none;
+      border-right: none;
+    }
+    .bbb-sub-grid > div:last-child {
+      border-radius: 0 0 8px 0;
+      border-top: none;
+    }
+    @media (max-width: 600px) {
+      .bbb-sub-grid { grid-template-columns: 1fr; }
+      .bbb-sub-grid > div:first-child {
+        border-radius: 0;
+        border-right: 1px solid #333a50;
+        border-bottom: none;
+      }
+      .bbb-sub-grid > div:last-child { border-radius: 0 0 8px 8px; }
+    }
+
     /* ── Small mobile (≤480px) ── */
     @media (max-width: 480px) {
       .stat-cards,
@@ -612,12 +638,95 @@
       z-index: 1299;
       background: rgba(10,12,24,0.65);
     }
-    /* Drawer badge layout: 2 columns on wider phones */
-    @media (min-width: 500px) {
-      #achDrawerBody { columns: 2; column-gap: 10px; }
-      #achDrawerBody .badge { break-inside: avoid; }
-      #achDrawerBody .rp-section { column-span: all; }
+    /* ── Achievement Tabs ── */
+    .ach-tabs {
+      display: flex; gap: 4px; margin-bottom: 10px;
+      padding: 4px 0 8px; border-bottom: 1px solid #1e2440;
+      position: sticky; top: 0; background: #0f1220; z-index: 2;
     }
+    .ach-tab-btn {
+      flex: 1; background: #141728; border: 1px solid #252a40;
+      border-radius: 6px; color: #7a8499; font-size: 0.58rem;
+      font-weight: 700; padding: 5px 2px; cursor: pointer;
+      transition: all 0.15s; letter-spacing: 0.02em;
+    }
+    .ach-tab-btn.active, .ach-tab-btn:hover {
+      background: rgba(240,160,64,0.12);
+      border-color: rgba(240,160,64,0.4); color: #f0a040;
+    }
+    /* ── Road Title ── */
+    .ach-road-title {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #f0a040;
+      margin: 14px 0 8px; padding: 3px 6px;
+      border-left: 3px solid #f0a040;
+      background: rgba(240,160,64,0.06); border-radius: 0 4px 4px 0;
+    }
+    /* ── Zigzag Timeline ── */
+    .ach-timeline { position: relative; margin-bottom: 4px; }
+    .ach-timeline::before {
+      content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 2px; transform: translateX(-50%); z-index: 0;
+      background: linear-gradient(to bottom,transparent 0%,#2a3255 8%,#2a3255 92%,transparent 100%);
+    }
+    .ach-trow {
+      display: grid; grid-template-columns: 1fr 30px 1fr;
+      min-height: 42px; position: relative;
+    }
+    .ach-tcell-l { display:flex; align-items:center; justify-content:flex-end; padding: 4px 8px 4px 0; text-align:right; }
+    .ach-tcell-r { display:flex; align-items:center; justify-content:flex-start; padding: 4px 0 4px 8px; }
+    .ach-tcell-c { display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
+    .ach-dot {
+      width:28px; height:28px; border-radius:50%;
+      background:#141728; border:2px solid #252a40;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; flex-shrink:0; position:relative; z-index:1;
+    }
+    .ach-dot.unlocked {
+      background:rgba(240,160,64,0.15); border-color:rgba(240,160,64,0.7);
+      box-shadow:0 0 6px rgba(240,160,64,0.25);
+    }
+    .ach-dot.prestige {
+      background:linear-gradient(135deg,rgba(240,160,64,0.22),rgba(255,215,0,0.18));
+      border-color:#f5c842; box-shadow:0 0 10px rgba(245,200,66,0.4);
+    }
+    .ach-dot.next {
+      background:rgba(78,154,241,0.15); border-color:#4e9af1;
+      animation:achPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes achPulse {
+      0%,100% { box-shadow:0 0 0 0 rgba(78,154,241,0.5); }
+      50%      { box-shadow:0 0 0 5px rgba(78,154,241,0); }
+    }
+    .ach-label { flex:1; min-width:0; }
+    .ach-label-name { font-size:0.63rem; font-weight:600; color:#6878a0; line-height:1.3; }
+    .ach-trow.unlocked .ach-label-name { color:#e8d5b0; }
+    .ach-trow.prestige .ach-label-name { color:#ffe9a0; }
+    .ach-trow.next     .ach-label-name { color:#9ec8f8; }
+    .ach-label-date { font-size:0.54rem; color:#52c41a; margin-top:1px; }
+    .ach-label-prog-wrap { margin-top:3px; background:#1e2240; border-radius:3px; height:3px; overflow:hidden; }
+    .ach-label-prog-fill { height:100%; border-radius:3px; }
+    .ach-label-prog-fill.near  { background:linear-gradient(90deg,#52c41a,#3da012); }
+    .ach-label-prog-fill.mid   { background:linear-gradient(90deg,#f0a040,#e06010); }
+    .ach-label-prog-fill.early { background:linear-gradient(90deg,#4e9af1,#2d7ae0); }
+    .ach-label-prog-txt { font-size:0.52rem; color:#5a6480; margin-top:2px; }
+    .ach-fog { text-align:center; padding:4px 0 10px; }
+    .ach-fog::before { content:''; display:block; width:2px; height:14px; background:linear-gradient(to bottom,#2a3255,transparent); margin:0 auto 5px; }
+    .ach-fog-txt { font-size:0.57rem; color:#404870; font-style:italic; }
+    /* ── Special Cards Grid ── */
+    .ach-sp-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; }
+    .ach-sp-card { border-radius:7px; padding:7px 6px; border:1px solid; text-align:center; position:relative; }
+    .ach-sp-card.unlocked { background:rgba(240,160,64,0.07); border-color:rgba(240,160,64,0.3); }
+    .ach-sp-card.locked   { background:#0e1120; border-color:#1c2238; opacity:0.55; }
+    .ach-sp-icon { font-size:1rem; line-height:1; margin-bottom:3px; }
+    .ach-sp-name { font-size:0.58rem; font-weight:600; color:#c0c8e0; line-height:1.3; }
+    .ach-sp-date { font-size:0.54rem; color:#7a8499; margin-top:2px; }
+    .ach-sp-val  { font-size:0.7rem; font-weight:700; color:#f0a040; margin-top:3px; }
+    .ach-sp-chk  { position:absolute; top:3px; right:5px; font-size:0.6rem; color:#52c41a; font-weight:900; }
+    .ach-sp-card.stat-full { grid-column:1/-1; text-align:left; display:flex; align-items:center; gap:8px; }
+    .ach-sp-card.stat-full .ach-sp-icon { font-size:1.2rem; margin-bottom:0; flex-shrink:0; }
+    .ach-sp-card.stat-full .ach-sp-name { font-size:0.62rem; }
+    .ach-sp-card.stat-full .ach-sp-val  { font-size:0.75rem; margin-top:1px; }
   </style>
 <script>
 // Global variables for tab state and data
@@ -4252,119 +4361,199 @@ function initAchievements(rawData) {
     if (isNaN(p)) return d;
     return p.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   }
-  // Prestigious badges: unlock date shown with gold shimmer
-  const PRESTIGE_BADGES = new Set([
-    'First 100','2nd Century','5th Century',
-    '1000 Runs','2000 Runs','3000 Runs',
-    'First 5-Wkt Haul','First Hat-Trick',
-    '50 Wickets','75 Wickets','100 Wickets',
-    '100 Innings','50 Matches','100 Matches',
-    '10-Innings Streak ≥20','15-Innings Streak ≥20',
-  ]);
 
-  function badge(icon, name, unlockDate, target, current, note) {
-    const unlocked  = !!unlockDate || (target === null);
-    const isPrestige = PRESTIGE_BADGES.has(name);
-    if (unlocked) {
-      const cls = 'badge unlocked' + (isPrestige ? ' prestige' : '');
-      const sub = (unlockDate ? fmtDate(unlockDate) : '') + (note ? (unlockDate ? ' · ' : '') + note : '');
-      const checkColor = isPrestige ? '🌟' : '✓';
-      return `<div class="${cls}">
-        <div class="badge-name"><span class="badge-icon">${icon}</span>${name}<span class="badge-check">${checkColor}</span></div>
-        ${sub ? `<div class="badge-date">${sub}</div>` : ''}
+  /* road: zigzag timeline with "reveal next" unlock mechanic
+     milestones: [{icon, name, date, current, target, prestige}]
+     target===null → always unlocked (boolean achievement) */
+  function road(title, milestones) {
+    let lastUnlocked = -1;
+    milestones.forEach((m, i) => { if (m.date || m.target === null) lastUnlocked = i; });
+    const showUpTo   = Math.min(lastUnlocked + 1, milestones.length - 1);
+    const hiddenCount = milestones.length - showUpTo - 1;
+
+    const rows = milestones.slice(0, showUpTo + 1).map((m, i) => {
+      const isLeft     = i % 2 === 0;
+      const isUnlocked = !!m.date || m.target === null;
+      const rowCls     = isUnlocked ? (m.prestige ? 'unlocked prestige' : 'unlocked') : 'next';
+      const dotCls     = 'ach-dot ' + (isUnlocked ? (m.prestige ? 'unlocked prestige' : 'unlocked') : 'next');
+
+      let sub = '';
+      if (isUnlocked && m.date) {
+        sub = `<div class="ach-label-date">${fmtDate(m.date)}</div>`;
+      } else if (!isUnlocked && m.target) {
+        const p  = Math.min(100, Math.round((m.current||0) / m.target * 100));
+        const fc = p >= 70 ? 'near' : p >= 35 ? 'mid' : 'early';
+        sub = `<div class="ach-label-prog-wrap"><div class="ach-label-prog-fill ${fc}" style="width:${p}%"></div></div>
+               <div class="ach-label-prog-txt">${(m.current||0).toLocaleString()} / ${m.target.toLocaleString()}${p>=70?' 🔥':''}</div>`;
+      }
+
+      const label = `<div class="ach-label"><div class="ach-label-name">${m.name}</div>${sub}</div>`;
+      const dot   = `<div class="${dotCls}">${m.icon}</div>`;
+      return `<div class="ach-trow ${rowCls}">
+        <div class="ach-tcell-l">${isLeft  ? label : ''}</div>
+        <div class="ach-tcell-c">${dot}</div>
+        <div class="ach-tcell-r">${!isLeft ? label : ''}</div>
       </div>`;
-    }
-    const pct = target ? Math.min(100, Math.round(current / target * 100)) : 0;
-    const fillClass = pct >= 70 ? 'near' : pct >= 35 ? 'mid' : 'early';
-    return `<div class="badge locked">
-      <div class="badge-name"><span class="badge-icon">${icon}</span>${name}</div>
-      <div class="badge-prog-wrap"><div class="badge-prog-fill ${fillClass}" style="width:${pct}%"></div></div>
-      <div class="badge-prog-label">${current} / ${target}${pct >= 70 ? ' — almost there!' : ''}</div>
+    }).join('');
+
+    const fog = hiddenCount > 0
+      ? `<div class="ach-fog"><div class="ach-fog-txt">🌫️ ${hiddenCount} more milestone${hiddenCount>1?'s':''} await...</div></div>`
+      : '';
+
+    return `<div class="ach-road-title">${title}</div><div class="ach-timeline">${rows}${fog}</div>`;
+  }
+
+  /* boolean unlock card */
+  function spCard(icon, name, unlocked, date, extra) {
+    return unlocked
+      ? `<div class="ach-sp-card unlocked"><div class="ach-sp-chk">✓</div>
+           <div class="ach-sp-icon">${icon}</div><div class="ach-sp-name">${name}</div>
+           ${date  ? `<div class="ach-sp-date">${fmtDate(date)}</div>`  : ''}
+           ${extra ? `<div class="ach-sp-date">${extra}</div>` : ''}
+         </div>`
+      : `<div class="ach-sp-card locked">
+           <div class="ach-sp-icon">${icon}</div><div class="ach-sp-name">${name}</div>
+           <div class="ach-sp-date">Locked 🔒</div>
+         </div>`;
+  }
+
+  /* full-width stat card */
+  function statCard(icon, name, value) {
+    return `<div class="ach-sp-card unlocked stat-full">
+      <div class="ach-sp-icon">${icon}</div>
+      <div><div class="ach-sp-name">${name}</div><div class="ach-sp-val">${value}</div></div>
     </div>`;
   }
-  function statBadge(icon, name, value) {
-    return `<div class="badge unlocked">
-      <div class="badge-name"><span class="badge-icon">${icon}</span>${name}</div>
-      <div class="badge-date" style="color:#f0a040;font-size:0.72rem;font-weight:700;margin-top:3px">${value}</div>
-    </div>`;
-  }
+
+  /* ── TAB: Batting ── */
+  const batTab = `
+    ${road('🏏 Run Milestones', [
+      {icon:'⚡', name:'250 Runs',  date:run250Date,  current:careerRuns, target:250},
+      {icon:'🔥', name:'500 Runs',  date:run500Date,  current:careerRuns, target:500},
+      {icon:'💪', name:'1000 Runs', date:run1000Date, current:careerRuns, target:1000, prestige:true},
+      {icon:'🚀', name:'1500 Runs', date:run1500Date, current:careerRuns, target:1500},
+      {icon:'🌠', name:'2000 Runs', date:run2000Date, current:careerRuns, target:2000, prestige:true},
+      {icon:'🌟', name:'2500 Runs', date:run2500Date, current:careerRuns, target:2500},
+      {icon:'🏅', name:'3000 Runs', date:run3000Date, current:careerRuns, target:3000, prestige:true},
+      {icon:'⚔️', name:'3500 Runs', date:null, current:careerRuns, target:3500},
+      {icon:'💎', name:'4000 Runs', date:null, current:careerRuns, target:4000, prestige:true},
+      {icon:'👑', name:'4500 Runs', date:null, current:careerRuns, target:4500},
+      {icon:'🌍', name:'5000 Runs', date:null, current:careerRuns, target:5000, prestige:true},
+    ])}
+    ${road('🎯 Score Milestones', [
+      {icon:'🥉', name:'First 25',      date:first25Date,   current:pbScore,  target:25},
+      {icon:'🥇', name:'First 50',      date:first50Date,   current:pbScore,  target:50},
+      {icon:'💯', name:'First 100',     date:first100Date,  current:pbScore,  target:100, prestige:true},
+      {icon:'🎯', name:'5 Fifties',     date:fifties5Date,  current:fifties,  target:5},
+      {icon:'🎯', name:'10 Fifties',    date:fifties10Date, current:fifties,  target:10},
+      {icon:'🎯', name:'15 Fifties',    date:null,          current:fifties,  target:15},
+      {icon:'🏅', name:'2nd Century',   date:hundreds2Date, current:hundreds, target:2, prestige:true},
+      {icon:'🏆', name:'5th Century',   date:hundreds5Date, current:hundreds, target:5, prestige:true},
+      {icon:'👑', name:'10th Century',  date:null,          current:hundreds, target:10, prestige:true},
+    ])}
+    ${road('📋 Innings Milestones', [
+      {icon:'🎖️', name:'25 Innings',  date:inn25Date,  current:batInnings, target:25},
+      {icon:'🏵️', name:'50 Innings',  date:inn50Date,  current:batInnings, target:50},
+      {icon:'💎', name:'75 Innings',  date:inn75Date,  current:batInnings, target:75},
+      {icon:'🎓', name:'100 Innings', date:inn100Date, current:batInnings, target:100, prestige:true},
+      {icon:'🌟', name:'150 Innings', date:null,       current:batInnings, target:150},
+      {icon:'👑', name:'200 Innings', date:null,       current:batInnings, target:200, prestige:true},
+    ])}
+    ${road('4️⃣ Fours Road', [
+      {icon:'4️⃣', name:'First Four',  date:first4Date,   target:null},
+      {icon:'🔵', name:'50 Fours',    date:fours50Date,  current:career4s, target:50},
+      {icon:'💠', name:'100 Fours',   date:fours100Date, current:career4s, target:100},
+      {icon:'🌊', name:'200 Fours',   date:null,         current:career4s, target:200},
+      {icon:'💎', name:'300 Fours',   date:null,         current:career4s, target:300},
+    ])}
+    ${road('6️⃣ Sixes Road', [
+      {icon:'6️⃣', name:'First Six',  date:first6Date,  target:null},
+      {icon:'🌊', name:'25 Sixes',   date:sixes25Date, current:career6s, target:25},
+      {icon:'☄️', name:'50 Sixes',   date:sixes50Date, current:career6s, target:50},
+      {icon:'🔥', name:'100 Sixes',  date:null,        current:career6s, target:100},
+      {icon:'👑', name:'150 Sixes',  date:null,        current:career6s, target:150},
+    ])}
+  `;
+
+  /* ── TAB: Bowling ── */
+  const bowlTab = `
+    ${road('🎳 Wicket Milestones', [
+      {icon:'🎯', name:'First Wicket',      date:firstWktDate,  target:null},
+      {icon:'💥', name:'First 3-Wkt Haul',  date:first3WktDate, target:null},
+      {icon:'🔱', name:'First 5-Wkt Haul',  date:first5WktDate, target:null, prestige:true},
+      {icon:'⭐', name:'25 Wickets',         date:wkt25Date,     current:careerWkts, target:25},
+      {icon:'🏆', name:'50 Wickets',         date:wkt50Date,     current:careerWkts, target:50, prestige:true},
+      {icon:'💫', name:'75 Wickets',         date:wkt75Date,     current:careerWkts, target:75},
+      {icon:'👑', name:'100 Wickets',        date:wkt100Date,    current:careerWkts, target:100, prestige:true},
+      {icon:'🌟', name:'150 Wickets',        date:null,          current:careerWkts, target:150},
+      {icon:'🌍', name:'200 Wickets',        date:null,          current:careerWkts, target:200, prestige:true},
+    ])}
+    ${road('🔄 Overs Milestones', [
+      {icon:'🧵', name:'First Maiden', date:firstMaidenDate, target:null},
+      {icon:'🎳', name:'50 Overs',     date:ov50Date,  current:Math.floor(careerOvers), target:50},
+      {icon:'💫', name:'100 Overs',    date:ov100Date, current:Math.floor(careerOvers), target:100},
+      {icon:'🌀', name:'200 Overs',    date:ov200Date, current:Math.floor(careerOvers), target:200},
+      {icon:'🔥', name:'300 Overs',    date:null,      current:Math.floor(careerOvers), target:300},
+      {icon:'👑', name:'500 Overs',    date:null,      current:Math.floor(careerOvers), target:500},
+    ])}
+    <div class="ach-road-title">📌 Bowling Bests</div>
+    <div class="ach-sp-grid">
+      ${statCard('📌','Best Bowling Innings', pbWkts + ' wkts · ' + fmtDate(pbWktDate))}
+      ${spCard('🧊','First Hat-Trick', !!firstHatDate, firstHatDate)}
+    </div>
+  `;
+
+  /* ── TAB: Special ── */
+  const spTab = `
+    <div class="ach-road-title">📌 Personal Bests</div>
+    <div class="ach-sp-grid">
+      ${statCard('🏏','Best Score', pbScore + ' runs · ' + fmtDate(pbDate))}
+      ${statCard('🦺','Best Duck-Free Run', bestDuckFreeStreak + ' innings' + (duckFreeStreakDate ? ' · ' + fmtDate(duckFreeStreakDate) : ''))}
+    </div>
+    <div class="ach-road-title">⚡ Special Innings</div>
+    <div class="ach-sp-grid">
+      ${spCard('🔥','Boundary Blitz',    !!boundaryBlitzDate, boundaryBlitzDate, '5+ boundaries in an inn')}
+      ${spCard('🚁','Six Machine',       !!sixMachineDate,    sixMachineDate,    '3+ sixes in an innings')}
+      ${spCard('💨','Finisher',          !!finisherDate,      finisherDate,      'SR≥150 with ≥15 balls')}
+      ${spCard('🛡️','Back-to-Back 50s', !!b2b50Date,         b2b50Date)}
+    </div>
+    <div class="ach-road-title">🦁 All-Rounder</div>
+    <div class="ach-sp-grid">
+      ${spCard('🦁','20+ Runs & 2+ Wkts', !!arDate,      arDate)}
+      ${spCard('🐉','30+ Runs & 3+ Wkts', !!ar30_3Date,  ar30_3Date)}
+    </div>
+    ${road('🏟️ Match Milestones', [
+      {icon:'🎽', name:'25 Matches',  date:match25Date,  current:totalMatches, target:25},
+      {icon:'🏟️', name:'50 Matches',  date:match50Date,  current:totalMatches, target:50, prestige:true},
+      {icon:'🎪', name:'100 Matches', date:match100Date, current:totalMatches, target:100, prestige:true},
+      {icon:'🌟', name:'150 Matches', date:null,         current:totalMatches, target:150},
+      {icon:'👑', name:'200 Matches', date:null,         current:totalMatches, target:200, prestige:true},
+    ])}
+    ${road('🏆 Win Milestones', [
+      {icon:'✊', name:'10 Wins',  date:win10Date, current:totalWins, target:10},
+      {icon:'🥊', name:'25 Wins',  date:win25Date, current:totalWins, target:25},
+      {icon:'🎉', name:'50 Wins',  date:win50Date, current:totalWins, target:50, prestige:true},
+      {icon:'🏆', name:'75 Wins',  date:null,      current:totalWins, target:75},
+      {icon:'👑', name:'100 Wins', date:null,      current:totalWins, target:100, prestige:true},
+    ])}
+    ${road('📊 Consistency Streaks', [
+      {icon:'📈', name:'5-Inn Streak ≥20',  date:streak5Date,  current:bestStreak, target:5},
+      {icon:'🌟', name:'10-Inn Streak ≥20', date:streak10Date, current:bestStreak, target:10},
+      {icon:'🔮', name:'15-Inn Streak ≥20', date:streak15Date, current:bestStreak, target:15},
+      {icon:'💎', name:'20-Inn Streak ≥20', date:null,         current:bestStreak, target:20},
+      {icon:'👑', name:'25-Inn Streak ≥20', date:null,         current:bestStreak, target:25, prestige:true},
+    ])}
+  `;
 
   const html = `
-    <div class="rp-section">🏏 Batting Runs</div>
-    ${badge('⚡','250 Runs', run250Date, 250, careerRuns)}
-    ${badge('🔥','500 Runs', run500Date, 500, careerRuns)}
-    ${badge('💪','1000 Runs', run1000Date, 1000, careerRuns)}
-    ${badge('🚀','1500 Runs', run1500Date, 1500, careerRuns)}
-    ${badge('🌠','2000 Runs', run2000Date, 2000, careerRuns)}
-    ${badge('🌟','2500 Runs', run2500Date, 2500, careerRuns)}
-    ${badge('🏅','3000 Runs', run3000Date, 3000, careerRuns)}
-
-    <div class="rp-section">🎯 Batting Scores</div>
-    ${statBadge('📌','Personal Best', pbScore + ' runs · ' + fmtDate(pbDate))}
-    ${badge('🥉','First 25 (QC)', first25Date, 25, pbScore)}
-    ${badge('🥇','First 50', first50Date, 50, pbScore)}
-    ${badge('💯','First 100', first100Date, 100, pbScore)}
-    ${badge('🎯','5 Fifties', fifties5Date, 5, fifties)}
-    ${badge('🎯','10 Fifties', fifties10Date, 10, fifties)}
-    ${badge('👑','2nd Century', hundreds2Date, 2, hundreds)}
-    ${badge('🏆','5th Century', hundreds5Date, 5, hundreds)}
-
-    <div class="rp-section">📋 Batting Innings</div>
-    ${badge('🎖️','25 Innings', inn25Date, 25, batInnings)}
-    ${badge('🏵️','50 Innings', inn50Date, 50, batInnings)}
-    ${badge('💎','75 Innings', inn75Date, 75, batInnings)}
-    ${badge('🎓','100 Innings', inn100Date, 100, batInnings)}
-
-    <div class="rp-section">🔵 Boundaries</div>
-    ${badge('4️⃣','First Four', first4Date, 1, career4s > 0 ? 1 : 0)}
-    ${badge('🔵','50 Career Fours', fours50Date, 50, career4s)}
-    ${badge('💠','100 Career Fours', fours100Date, 100, career4s)}
-    ${badge('6️⃣','First Six', first6Date, 1, career6s > 0 ? 1 : 0)}
-    ${badge('🌊','25 Career Sixes', sixes25Date, 25, career6s)}
-    ${badge('☄️','50 Career Sixes', sixes50Date, 50, career6s)}
-
-    <div class="rp-section">⚡ Special Innings</div>
-    ${badge('🔥','Boundary Blitz (5+ in innings)', boundaryBlitzDate, null, null)}
-    ${badge('🚁','Six Machine (3+ sixes in innings)', sixMachineDate, null, null)}
-    ${badge('💨','Finisher (SR≥150, ≥15 balls)', finisherDate, null, null)}
-    ${badge('🛡️','Back-to-Back Fifties', b2b50Date, null, null)}
-    ${statBadge('🦺','Best Duck-Free Streak', bestDuckFreeStreak + ' innings' + (duckFreeStreakDate ? ' · ' + fmtDate(duckFreeStreakDate) : ''))}
-
-    <div class="rp-section">🎳 Bowling Wickets</div>
-    ${statBadge('📌','Best Bowling', pbWkts + ' wkts · ' + fmtDate(pbWktDate))}
-    ${badge('🎯','First Wicket', firstWktDate, 1, careerWkts > 0 ? 1 : 0)}
-    ${badge('💥','First 3-Wkt Haul', first3WktDate, 3, pbWkts)}
-    ${badge('🔱','First 5-Wkt Haul', first5WktDate, 5, pbWkts)}
-    ${badge('🧊','First Hat-Trick', firstHatDate, 1, 0)}
-    ${badge('⭐','25 Wickets', wkt25Date, 25, careerWkts)}
-    ${badge('🏆','50 Wickets', wkt50Date, 50, careerWkts)}
-    ${badge('💫','75 Wickets', wkt75Date, 75, careerWkts)}
-    ${badge('👑','100 Wickets', wkt100Date, 100, careerWkts)}
-
-    <div class="rp-section">🔄 Bowling Overs</div>
-    ${badge('🧵','First Maiden', firstMaidenDate, 1, 0)}
-    ${badge('🎳','50 Overs', ov50Date, 50, Math.floor(careerOvers))}
-    ${badge('💫','100 Overs', ov100Date, 100, Math.floor(careerOvers))}
-    ${badge('🌀','200 Overs', ov200Date, 200, Math.floor(careerOvers))}
-
-    <div class="rp-section">🏟️ Matches Played</div>
-    ${badge('🎽','25 Matches', match25Date, 25, totalMatches)}
-    ${badge('🏟️','50 Matches', match50Date, 50, totalMatches)}
-    ${badge('🎪','100 Matches', match100Date, 100, totalMatches)}
-
-    <div class="rp-section">🏆 Wins</div>
-    ${badge('✊','10 Wins', win10Date, 10, totalWins)}
-    ${badge('🥊','25 Wins', win25Date, 25, totalWins)}
-    ${badge('🎉','50 Wins', win50Date, 50, totalWins)}
-
-    <div class="rp-section">📊 Consistency</div>
-    ${badge('📈','5-Innings Streak ≥20', streak5Date, 5, bestStreak)}
-    ${badge('🌟','10-Innings Streak ≥20', streak10Date, 10, bestStreak)}
-    ${badge('🔮','15-Innings Streak ≥20', streak15Date, 15, bestStreak)}
-
-    <div class="rp-section">⚡ All-Rounder</div>
-    ${badge('🦁','20+ Runs & 2+ Wkts', arDate, null, null)}
-    ${badge('🐉','30+ Runs & 3+ Wkts', ar30_3Date, null, null)}
+    <div class="ach-tabs">
+      <button class="ach-tab-btn active" onclick="achTabSwitch(this,'ach-bat')">🏏 Batting</button>
+      <button class="ach-tab-btn" onclick="achTabSwitch(this,'ach-bowl')">🎳 Bowling</button>
+      <button class="ach-tab-btn" onclick="achTabSwitch(this,'ach-sp')">⚡ Special</button>
+    </div>
+    <div id="ach-bat" class="ach-tab-content">${batTab}</div>
+    <div id="ach-bowl" class="ach-tab-content" style="display:none">${bowlTab}</div>
+    <div id="ach-sp"   class="ach-tab-content" style="display:none">${spTab}</div>
   `;
 
   document.getElementById('rp-content').innerHTML = html;
@@ -4373,6 +4562,16 @@ function initAchievements(rawData) {
 /* ══════════════════════════════════════
    RAW DATA TABLE
 ══════════════════════════════════════ */
+/* Tab switching for achievement panels (works in both right-pane & drawer) */
+function achTabSwitch(btn, tabId) {
+  const container = btn.closest('.ach-tabs').parentElement;
+  container.querySelectorAll('.ach-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  container.querySelectorAll('.ach-tab-content').forEach(el => {
+    el.style.display = el.id === tabId ? '' : 'none';
+  });
+}
+
 function initRawData(rawData) {
   const rows = norm(rawData).sort((a,b) => safeNum(b['Innings_Num']) - safeNum(a['Innings_Num']));
 
@@ -4575,8 +4774,8 @@ function initBallByBall(rawData) {
   const BC = { dot:'#374151', r1:'#3b82f6', r2:'#10b981', r3:'#6366f1', r4:'#06b6d4', r6:'#8b5cf6', W:'#ef4444', wd:'#f97316', nb:'#fbbf24', lb:'#6b7280', b:'#9ca3af' };
   function bColor(b) {
     if (b.type==='W')  return BC.W;   if (b.type==='wd') return BC.wd;
-    if (b.type==='nb') return BC.nb;  if (b.type==='lb') return BC.lb;
-    if (b.type==='b')  return BC.b;
+    if (b.type==='nb') return BC.nb;  if (b.type==='lb') return BC.wd;
+    if (b.type==='b')  return BC.wd;
     if (b.batRuns===0) return BC.dot; if (b.batRuns===1) return BC.r1;
     if (b.batRuns===2) return BC.r2;  if (b.batRuns===3) return BC.r3;
     if (b.batRuns===4) return BC.r4;  if (b.batRuns===6) return BC.r6;
@@ -4645,6 +4844,70 @@ function initBallByBall(rawData) {
     const bp=runs?+((fours*4+sixes*6)/runs*100).toFixed(0):0;
     return{lbl:pg.lbl,sr,dotPct:dp,bndPct:bp,runs,legal,fours,sixes};
   });
+
+  /* ── innings-wise dot% ── */
+  const inningsDotStats = bat.map(r => {
+    const balls = parseBalls(getBbbSeq(r));
+    const legal  = balls.filter(b => b.type !== 'wd' && b.type !== 'nb').length;
+    const dots   = balls.filter(b => (b.type==='run'||b.type==='W'||b.type==='lb'||b.type==='b') && b.batRuns===0).length;
+    const dotPct = legal ? +(dots/legal*100).toFixed(1) : 0;
+    const runs   = safeNum(r['Runs']);
+    const lbl    = `${r['Match Date']||''} vs ${r['Against']||''} (${runs})`;
+    return { lbl, dotPct, runs, legal };
+  });
+
+  /* ── dismissal ball position histogram ── */
+  const DISM_GROUPS = [
+    {lbl:'1–5',lo:1,hi:5},{lbl:'6–10',lo:6,hi:10},{lbl:'11–15',lo:11,hi:15},
+    {lbl:'16–20',lo:16,hi:20},{lbl:'21–30',lo:21,hi:30},{lbl:'31+',lo:31,hi:999},
+  ];
+  const dismCounts = DISM_GROUPS.map(g => {
+    let cnt = 0;
+    bat.forEach(r => {
+      if (!isDismissed(r)) return;
+      const legal = parseBalls(getBbbSeq(r)).filter(b => b.type!=='wd'&&b.type!=='nb');
+      const wPos  = legal.findIndex(b => b.type==='W');
+      if (wPos === -1) return;
+      const ballNum = wPos + 1;
+      if (ballNum >= g.lo && ballNum <= g.hi) cnt++;
+    });
+    return cnt;
+  });
+
+  /* ── set vs not-set (split at ball 10) ── */
+  const setStats = (() => {
+    let earlyR=0,earlyB=0,earlyDots=0,earlyBnd=0,lateR=0,lateB=0,lateDots=0,lateBnd=0;
+    bat.forEach(r => {
+      const legal = parseBalls(getBbbSeq(r)).filter(b => b.type!=='wd'&&b.type!=='nb');
+      legal.forEach((b,i) => {
+        const isDot = (b.type==='run'||b.type==='W'||b.type==='lb'||b.type==='b') && b.batRuns===0;
+        const isBnd = b.batRuns===4||b.batRuns===6;
+        if (i < 10) { earlyB++; earlyR+=b.batRuns; if(isDot)earlyDots++; if(isBnd)earlyBnd++; }
+        else         { lateB++;  lateR+=b.batRuns;  if(isDot)lateDots++;  if(isBnd)lateBnd++;  }
+      });
+    });
+    return {
+      earlySR:  earlyB ? +(earlyR/earlyB*100).toFixed(1):0,
+      earlyDot: earlyB ? +(earlyDots/earlyB*100).toFixed(1):0,
+      earlyBnd: earlyB ? +(earlyBnd/earlyB*100).toFixed(1):0,
+      lateSR:   lateB  ? +(lateR/lateB*100).toFixed(1):0,
+      lateDot:  lateB  ? +(lateDots/lateB*100).toFixed(1):0,
+      lateBnd:  lateB  ? +(lateBnd/lateB*100).toFixed(1):0,
+      earlyB, lateB
+    };
+  })();
+
+  /* ── acceleration index (1st-half SR vs 2nd-half SR per innings) ── */
+  const accelData = bat.map(r => {
+    const legal = parseBalls(getBbbSeq(r)).filter(b => b.type!=='wd'&&b.type!=='nb');
+    if (legal.length < 6) return null;
+    const mid   = Math.floor(legal.length / 2);
+    const fSR   = legal.slice(0, mid).reduce((s,b)=>s+b.batRuns,0) / mid * 100;
+    const sSR   = legal.slice(mid).reduce((s,b)=>s+b.batRuns,0) / (legal.length - mid) * 100;
+    return { accel: +(sSR-fSR).toFixed(1), fSR: +fSR.toFixed(1), sSR: +sSR.toFixed(1),
+             lbl: `${r['Match Date']||''} vs ${r['Against']||''} (${safeNum(r['Runs'])})` };
+  }).filter(Boolean);
+  const avgAccel = accelData.length ? +(accelData.reduce((s,x)=>s+x.accel,0)/accelData.length).toFixed(1) : 0;
 
   /* ── half-year period trends ── */
   const _hyLbl=d=>{if(!d)return null;const dt=new Date(d);return isNaN(dt)?null:`${dt.getFullYear()} ${dt.getMonth()<6?'H1':'H2'}`;};
@@ -4794,6 +5057,13 @@ function initBallByBall(rawData) {
     if(ds<-15)       return{txt:'SR has dipped — revisit shot selection & intent 📉',c:'#ef4444'};
     return{txt:'Broadly consistent across periods',c:'#f0a040'};
   })():{txt:'Track more innings to see period trends',c:'#7a8499'};
+  const setHtml = [['SR',setStats.earlySR,setStats.lateSR,false],['Dot %',setStats.earlyDot,setStats.lateDot,true],['Boundary %',setStats.earlyBnd,setStats.lateBnd,false]].map(([lbl,ev,lv,inv])=>{
+    const ec=inv?(ev<=lv?'#52c41a':'#ef4444'):(ev>=lv?'#52c41a':'#ef4444');
+    const lc=inv?(lv<=ev?'#52c41a':'#ef4444'):(lv>=ev?'#52c41a':'#ef4444');
+    const mx=Math.max(ev,lv,1);
+    return `<div style="padding:7px 0;border-bottom:1px solid #1a1d2e"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:0.68rem;color:#7a8499">${lbl}</span><span style="font-size:0.68rem"><b style="color:${ec}">${ev}</b><span style="color:#555"> vs </span><b style="color:${lc}">${lv}</b></span></div><div style="display:flex;gap:3px"><div style="flex:1;background:#1a1d2e;border-radius:2px;height:5px"><div style="width:${Math.min(100,ev/mx*100)}%;height:5px;background:${ec};border-radius:2px"></div></div><div style="flex:1;background:#1a1d2e;border-radius:2px;height:5px"><div style="width:${Math.min(100,lv/mx*100)}%;height:5px;background:${lc};border-radius:2px"></div></div></div><div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-size:0.58rem;color:#555">Balls 1–10</span><span style="font-size:0.58rem;color:#555">Balls 11+</span></div></div>`;
+  }).join('') + `<div style="font-size:0.65rem;color:#7a8499;margin-top:8px;font-style:italic">${setStats.lateSR>setStats.earlySR?'📈 Scores more freely once set':'⚡ Faster starter — attacks early'}</div>`;
+
   const insightsHtml=`
     <div style="background:rgba(82,196,26,0.06);border:1px solid rgba(82,196,26,0.18);border-radius:7px;padding:9px 12px;margin-bottom:10px;color:${trendVerdict.c};font-size:0.76rem;font-weight:600">${trendVerdict.txt}</div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:0.74rem">
@@ -4848,6 +5118,37 @@ function initBallByBall(rawData) {
           <div style="font-size:0.82rem;font-weight:700;color:#d0d6e8;margin-bottom:3px">Scoring Trends by Half-Year Period</div>
           <div style="font-size:0.67rem;color:#7a8499;margin-bottom:12px">Track coaching progress: SR, Dot%, Boundary%, Rotation% across time</div>
           ${periodTableHtml}
+        </div>
+      </div>
+
+      <!-- Row 1b: Innings-wise Dot% -->
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;margin-bottom:14px">
+        <div style="font-size:0.82rem;font-weight:700;color:#d0d6e8;margin-bottom:3px">Innings-wise Dot Ball %</div>
+        <div style="font-size:0.67rem;color:#7a8499;margin-bottom:10px">Dot% per innings across all recorded ball-by-ball data — lower is better</div>
+        <div style="position:relative;height:160px"><canvas id="cBbbInnDot"></canvas></div>
+      </div>
+
+      <!-- Row 1c: Dismissal Ball + Set vs Not-Set + Acceleration Index -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px;margin-bottom:14px">
+        <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
+          <div style="font-size:0.82rem;font-weight:700;color:#d0d6e8;margin-bottom:3px">🎯 Dismissal Ball Histogram</div>
+          <div style="font-size:0.67rem;color:#7a8499;margin-bottom:10px">Which ball range causes most dismissals — find vulnerability windows</div>
+          <div style="position:relative;height:160px"><canvas id="cBbbDismBall"></canvas></div>
+        </div>
+        <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
+          <div style="font-size:0.82rem;font-weight:700;color:#d0d6e8;margin-bottom:3px">🧱 Set vs Not-Set Batting</div>
+          <div style="font-size:0.67rem;color:#7a8499;margin-bottom:10px">First 10 balls vs remaining — how performance evolves as batter settles</div>
+          <div style="font-size:0.7rem;font-weight:600;color:#7a8499;margin-bottom:6px">Balls 1–10 (${setStats.earlyB}) &nbsp;|&nbsp; Balls 11+ (${setStats.lateB})</div>
+          ${setHtml}
+        </div>
+        <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px">
+          <div style="font-size:0.82rem;font-weight:700;color:#d0d6e8;margin-bottom:3px">⚡ Acceleration Index</div>
+          <div style="font-size:0.67rem;color:#7a8499;margin-bottom:6px">Per-innings: how much faster the 2nd half was vs 1st half (SR ratio −1, ×100)</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
+            <span style="font-size:1.4rem;font-weight:800;color:${avgAccel>=0?'#52c41a':'#ef4444'}">${avgAccel>0?'+':''}${avgAccel}</span>
+            <span style="font-size:0.68rem;color:#7a8499">avg index (${accelData.length} innings)</span>
+          </div>
+          <div style="position:relative;height:120px"><canvas id="cBbbAccel"></canvas></div>
         </div>
       </div>
 
@@ -4959,7 +5260,7 @@ function initBallByBall(rawData) {
                      : b.batRuns===6 ? '2px solid rgba(139,92,246,0.8)'
                      : b.batRuns===4 ? '2px solid rgba(6,182,212,0.8)'
                      : '2px solid transparent';
-        return `<div title="Ball #${ballNum} — ${tip}" style="width:30px;height:30px;border-radius:5px;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;font-size:${sz};font-weight:700;color:#fff;cursor:default;flex-shrink:0">${lbl}</div>`;
+        return `<div title="Ball #${ballNum} — ${tip}" style="width:30px;height:30px;border-radius:50%;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;font-size:${sz};font-weight:700;color:#fff;cursor:default;flex-shrink:0">${lbl}</div>`;
       });
       return `<div style="display:flex;flex-wrap:wrap;gap:5px">${ballDivs.join('')}</div>`;
     })();
@@ -5037,44 +5338,42 @@ function initBallByBall(rawData) {
         </div>
       </div>
 
-      <!-- Ball sequence grid + Side panels -->
-      <div style="display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;align-items:start">
-        <!-- Ball grid -->
-        <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:14px;overflow-x:auto">
-          <div style="font-size:0.78rem;font-weight:600;color:#d0d6e8;margin-bottom:10px">
-            Ball-by-Ball Sequence
-            <span style="font-weight:400;color:#7a8499;font-size:0.63rem;margin-left:6px">hover for detail · outline = boundary/wicket · batsman-faced balls only</span>
-          </div>
-          <!-- Legend -->
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-            ${[
-              { c:BC.dot, l:'Dot' }, { c:BC.r1, l:'1' }, { c:BC.r2, l:'2' },
-              { c:BC.r4,  l:'4'  }, { c:BC.r6, l:'6' }, { c:BC.W,  l:'W' },
-              { c:BC.nb,  l:'NB' }, { c:BC.wd, l:'Wd'}, { c:BC.lb, l:'Bye/LB' },
-            ].map(x=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.62rem;color:#7a8499">
-              <span style="width:11px;height:11px;border-radius:2px;background:${x.c};display:inline-block;flex-shrink:0"></span>${x.l}
-            </span>`).join('')}
-          </div>
-          ${ballGridHtml}
+      <!-- Ball sequence grid (full width) -->
+      <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px 8px 0 0;padding:14px;overflow-x:auto">
+        <div style="font-size:0.78rem;font-weight:600;color:#d0d6e8;margin-bottom:10px">
+          Ball-by-Ball Sequence
+          <span style="font-weight:400;color:#7a8499;font-size:0.63rem;margin-left:6px">hover for detail · outline = boundary/wicket · batsman-faced balls only</span>
         </div>
-        <!-- Right side panels -->
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <!-- Milestones -->
-          <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:12px">
-            <div style="font-size:0.73rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Milestone Balls</div>
-            <div style="display:flex;flex-wrap:wrap;gap:5px">${milestoneHtml}</div>
-          </div>
-          <!-- Key Moments -->
-          <div style="background:#252a3b;border:1px solid #333a50;border-radius:8px;padding:12px">
-            <div style="font-size:0.73rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Key Moments</div>
-            <div style="font-size:0.71rem;display:flex;flex-direction:column;gap:4px">
-              ${maxDots>1?`<div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Max dot streak: <b style="color:#ef4444">${maxDots} balls</b> <span style="color:#7a8499">(#${presStart+1}–#${presEnd+1})</span></div>`:''}
-              ${maxBurst>1?`<div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Best scoring burst: <b style="color:#52c41a">${maxBurst} balls</b> <span style="color:#7a8499">(#${burstStart+1}–#${burstEnd+1})</span></div>`:''}
-              <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Legal balls: <b style="color:#f0a040">${legalB}</b></div>
-              <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Boundary runs: <b style="color:#06b6d4">${bndRuns}</b> of ${totalBat}</div>
-              <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Wides: <b style="color:#f97316">${wides}</b> &nbsp; No Balls: <b style="color:#fbbf24">${nbs}</b></div>
-              <div style="padding:4px 0;color:#d0d6e8">Leg Byes: <b style="color:#9ca3af">${lbs}</b> &nbsp; Byes: <b style="color:#9ca3af">${bys}</b></div>
-            </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          ${[
+            { c:BC.dot, l:'Dot' }, { c:BC.r1, l:'1' }, { c:BC.r2, l:'2' },
+            { c:BC.r4,  l:'4'  }, { c:BC.r6, l:'6' }, { c:BC.W,  l:'W' },
+            { c:BC.nb,  l:'NB' }, { c:BC.wd, l:'Bye/LB' },
+          ].map(x=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.62rem;color:#7a8499">
+            <span style="width:11px;height:11px;border-radius:2px;background:${x.c};display:inline-block;flex-shrink:0"></span>${x.l}
+          </span>`).join('')}
+        </div>
+        ${ballGridHtml}
+      </div>
+
+      <!-- Milestone + Key Moments side by side below -->
+      <div class="bbb-sub-grid">
+        <!-- Milestones -->
+        <div style="background:#252a3b;border:1px solid #333a50;padding:12px">
+          <div style="font-size:0.73rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Milestone Balls</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">${milestoneHtml}</div>
+        </div>
+        <!-- Key Moments -->
+        <div style="background:#252a3b;border:1px solid #333a50;padding:12px">
+          <div style="font-size:0.73rem;font-weight:600;color:#d0d6e8;margin-bottom:8px">Key Moments</div>
+          <div style="font-size:0.71rem;display:flex;flex-direction:column;gap:4px">
+            ${maxDots>1?`<div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Max dot streak: <b style="color:#ef4444">${maxDots} balls</b> <span style="color:#7a8499">(#${presStart+1}–#${presEnd+1})</span></div>`:''}
+            ${maxBurst>1?`<div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Best scoring burst: <b style="color:#52c41a">${maxBurst} balls</b> <span style="color:#7a8499">(#${burstStart+1}–#${burstEnd+1})</span></div>`:''}
+            <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Legal balls: <b style="color:#f0a040">${legalB}</b></div>
+            <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Boundary runs: <b style="color:#06b6d4">${bndRuns}</b> of ${totalBat}</div>
+            <div style="padding:4px 0;border-bottom:1px solid #1a1d2e;color:#d0d6e8">Wides: <b style="color:#f97316">${wides}</b> &nbsp; No Balls: <b style="color:#fbbf24">${nbs}</b></div>
+            <div style="padding:4px 0;color:#d0d6e8">Leg Byes: <b style="color:#9ca3af">${lbs}</b> &nbsp; Byes: <b style="color:#9ca3af">${bys}</b></div>
           </div>
         </div>
       </div>`;
@@ -5163,6 +5462,39 @@ function initBallByBall(rawData) {
     }
   });
 
+  // Innings-wise Dot% vertical bar chart
+  new Chart(document.getElementById('cBbbInnDot'), {
+    type: 'bar',
+    data: {
+      labels: inningsDotStats.map(x => x.lbl),
+      datasets: [{
+        label: 'Dot %',
+        data: inningsDotStats.map(x => x.dotPct),
+        backgroundColor: inningsDotStats.map(x =>
+          x.dotPct <= 30 ? 'rgba(82,196,26,0.75)' :
+          x.dotPct <= 45 ? 'rgba(240,160,64,0.75)' : 'rgba(239,68,68,0.75)'
+        ),
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...TOOLTIP, callbacks: { label: i => ` Dot%: ${i.raw}% (${inningsDotStats[i.dataIndex].legal} balls)` } }
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false },
+          title: { display: true, text: 'Dot %', color: '#7a8499', font: { size: 9 } },
+          ticks: { color: '#7a8499', callback: v => v + '%' }, min: 0, max: 100
+        }
+      }
+    }
+  });
+
   // Innings Arc chart — average cumulative runs at each legal ball position
   new Chart(document.getElementById('cBbbArc'), {
     type: 'line',
@@ -5185,6 +5517,62 @@ function initBallByBall(rawData) {
       }
     }
   });
+
+  // Dismissal Ball Histogram
+  new Chart(document.getElementById('cBbbDismBall'), {
+    type: 'bar',
+    data: {
+      labels: DISM_GROUPS.map(g => g.lbl),
+      datasets: [{
+        label: 'Dismissals',
+        data: dismCounts,
+        backgroundColor: 'rgba(239,68,68,0.75)',
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...TOOLTIP, callbacks: { label: i => ` ${i.raw} dismissal${i.raw!==1?'s':''} in balls ${DISM_GROUPS[i.dataIndex].lbl}` } }
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { color: '#7a8499', font: { size: 9 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false },
+             ticks: { color: '#7a8499', stepSize: 1, precision: 0 }, min: 0 }
+      }
+    }
+  });
+
+  // Acceleration Index per innings
+  if (accelData.length) {
+    new Chart(document.getElementById('cBbbAccel'), {
+      type: 'bar',
+      data: {
+        labels: accelData.map((_, i) => i + 1),
+        datasets: [{
+          label: 'Accel Index',
+          data: accelData.map(x => x.accel),
+          backgroundColor: accelData.map(x => x.accel >= 0 ? 'rgba(82,196,26,0.75)' : 'rgba(239,68,68,0.75)'),
+          borderRadius: 3,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { ...TOOLTIP, callbacks: { label: i => ` ${accelData[i.dataIndex].lbl}: ${i.raw > 0 ? '+' : ''}${i.raw} (${accelData[i.dataIndex].fSR} → ${accelData[i.dataIndex].sSR})` } }
+        },
+        scales: {
+          x: { grid: { display: false }, border: { display: false }, ticks: { display: false } },
+          y: { grid: { color: 'rgba(255,255,255,0.04)' }, border: { display: false },
+               ticks: { color: '#7a8499', callback: v => (v > 0 ? '+' : '') + v }, min: null }
+        }
+      }
+    });
+  }
 }
 
 // Google Sheet CSV URL (read-only)
