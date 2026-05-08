@@ -184,6 +184,7 @@
       #tab-bowl-overview::before { content: 'Bowling — Overview'; }
       #tab-bowl-league::before  { content: 'Bowling — League Breakdown'; }
       #tab-bowl-phase::before   { content: 'Bowling — Phase Analysis'; }
+      #tab-ball-by-ball::before  { content: 'Ball by Ball Analysis'; }
       #tab-rawdata::before      { content: 'Raw Data'; }
 
       /* ── Stat card grids ── */
@@ -523,6 +524,41 @@
       #statsFormRow, #statsMainRow { grid-template-columns: 1fr !important; }
     }
 
+    /* ── Consistency meter layout ── */
+    .con-metrics-row {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+    .con-meter-col {
+      flex: 0 0 260px;
+      max-width: 260px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .con-cards-col {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    @media (max-width: 700px) {
+      .con-metrics-row { flex-direction: column; gap: 10px; }
+      .con-meter-col { max-width: 100%; width: 100%; margin-bottom: 10px; }
+      .con-cards-col { width: 100%; }
+      #conCards { grid-template-columns: repeat(3,1fr) !important; }
+      #bowlCards { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    @media (min-width: 701px) {
+      #conCards { grid-template-columns: repeat(auto-fill,minmax(120px,1fr)) !important; }
+    }
+
     /* ── Ball-by-Ball sub grid (Milestone + Key Moments) ── */
     .bbb-sub-grid {
       display: grid;
@@ -812,7 +848,7 @@ function showTab(name, linkEl) {
     <div class="sidebar-section">
       <div class="sidebar-section-label"><span class="icon">🎳</span> Bowling</div>
       <a href="#" onclick="showTab('bowl-overview',this);return false;">📊 Overview</a>
-      <a href="#" onclick="showTab('bowl-league',this);return false;">🏆 By League</a>
+      <a href="#" onclick="showTab('bowl-league',this);return false;">🏆 League</a>
       <a href="#" onclick="showTab('bowl-phase',this);return false;">🔬 Phase</a>
     </div>
     <div class="sidebar-divider"></div>
@@ -871,12 +907,10 @@ window.addEventListener('DOMContentLoaded', function() {
     function openSidebar() {
       sidebar.classList.add('open');
       backdrop.style.display = 'block';
-      console.log('[DEBUG] Sidebar opened');
     }
     function closeSidebar() {
       sidebar.classList.remove('open');
       backdrop.style.display = 'none';
-      console.log('[DEBUG] Sidebar closed');
     }
     hamburger.onclick = openSidebar;
     hamburger.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') openSidebar(); };
@@ -965,9 +999,7 @@ function exportPDF() {
   Chart.defaults.animation = false;
 
   // 2. Initialize any tab that hasn't been rendered yet
-  const allTabs = ['stats','overview','position','league','phase','consistency',
-                   'bowl-overview','bowl-league','bowl-phase','ball-by-ball','rawdata'];
-  allTabs.forEach(name => {
+  TAB_IDS.forEach(name => {
     if (!_tabCharts[name]) {
       const el = document.getElementById('tab-' + name);
       if (el) el.style.display = '';
@@ -1827,7 +1859,6 @@ function renderYearVol(years, yearRuns, yearInnings, yearAvgs, careerAVG) {
             if (ctx.dataset.label==='Innings') return `  Innings: ${ctx.raw}`;
           }
         }},
-        annotation: undefined
       },
       scales:{
         x:{ grid:{display:false}, border:{display:false}, ticks:{color:'#8a90a8'} },
@@ -3384,51 +3415,6 @@ function initConsistency(rawData) {
         <div id="conCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
       </div>
     </div>
-    <style>
-      .con-metrics-row {
-        display: flex;
-        flex-direction: row;
-        gap: 18px;
-        align-items: stretch;
-        margin-bottom: 12px;
-      }
-      .con-meter-col {
-        flex: 0 0 260px;
-        max-width: 260px;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .con-cards-col {
-        flex: 1 1 0;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      @media (max-width: 700px) {
-        .con-metrics-row {
-          flex-direction: column;
-          gap: 10px;
-        }
-        .con-meter-col {
-          max-width: 100%;
-          width: 100%;
-          margin-bottom: 10px;
-        }
-        .con-cards-col {
-          width: 100%;
-        }
-        #conCards {
-          grid-template-columns: repeat(3,1fr) !important;
-        }
-      }
-      @media (min-width: 701px) {
-        #conCards { grid-template-columns: repeat(auto-fill,minmax(120px,1fr)) !important; }
-      }
-    </style>
 
     <!-- row 1: rolling avg chart + streak heatmap -->
     <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -3891,13 +3877,6 @@ function initBowlOverview(rawData) {
   const rows = bowlingRows(rawData);
   document.getElementById('tab-bowl-overview').innerHTML = `
     <div id="bowlCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-bottom:14px"></div>
-    <style>
-      @media (max-width: 700px) {
-        #bowlCards {
-          grid-template-columns: repeat(3, 1fr) !important;
-        }
-      }
-    </style>
     <!-- Wicket hauls row -->
     <div style="background:#1c2035;border:1px solid #333a50;border-radius:8px;padding:12px 16px;margin-bottom:14px">
       <div style="font-size:0.78rem;font-weight:700;color:#d0d6e8;margin-bottom:10px;display:flex;align-items:center;gap:6px">
@@ -4029,7 +4008,7 @@ function initBowlOverview(rawData) {
       { type:'line', data:Array(rows.length).fill(careerEco==='—'?null:careerEco),
         label:`Career Eco ${careerEco}`,
         borderColor:'rgba(76,201,192,0.5)', backgroundColor:'transparent',
-        borderWidth:1.5, borderDash:[5,3], pointRadius:0, tension:0, yAxisID:'yE' }
+        borderWidth:1.5, borderDash:[5,3], pointRadius:0, tension:0 }
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,padding:10,filter:i=>i.datasetIndex>0}},
@@ -5218,9 +5197,6 @@ function initBallByBall(rawData) {
       return w.length ? +(w.reduce((s,b)=>s+b.batRuns,0)/w.length*100).toFixed(0) : 0;
     });
     const roll5Labels = legalBallSeq.map((_,i)=>i+1);
-
-    /* ── dot pressure zones: find scoring bursts vs dot runs ── */
-    let maxDotRun=0, curDotRun=0, dotRunStart=0, dotRunEnd=0, tmpDS=0;
 
     /* ── max dot streak ── */
     let maxDots=0, curDots=0, presStart=0, presEnd=0, tmpStart=0;
