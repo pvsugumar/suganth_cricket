@@ -1328,7 +1328,7 @@ function init(rawData) {
   const settledPct = pct(settled, innings);
   [
     { label:'Matches',     val: matches,                      sub: `${innings} innings`,   color:'#d0d6e8' },
-    { label:'Innings',     val: innings,                      sub: `${dnb} DNB`,           color:'#d0d6e8' },
+    { label:'Innings',     val: innings,                      sub: `${dnb} DNB (not counted)`,           color:'#d0d6e8' },
     { label:'Runs',        val: totalRuns.toLocaleString(),   sub: `${totalBalls} balls`,  color:'#f0a040' },
     { label:'Avg',         val: careerAVG,                    sub: `NO ${notOuts}`,         color:'#f0a040' },
     { label:'SR',          val: careerSR,                     sub: `Dot ${dotPct}%`,        color:'#4e9af1' },
@@ -2514,6 +2514,17 @@ function initLeague(rawData) {
   const lbls = leagues.map(shortLabel);
 
   /* computed metrics */
+  // Calculate matches using all records (including DNB), not just batting innings
+  const allByLeague = {};
+  all.forEach(r => {
+    const l = r['League'] || 'Unknown';
+    if (!allByLeague[l]) allByLeague[l] = [];
+    allByLeague[l].push(r);
+  });
+  const lgMatches = leagues.map(l => {
+    const matchNums = new Set(allByLeague[l].map(r => r['Match_Num']));
+    return matchNums.size;
+  });
   const lgInnings  = leagues.map(l => byLeague[l].length);
   const lgRuns     = leagues.map(l => byLeague[l].reduce((s,r)=>s+safeNum(r['Runs']),0));
   const lgAvg      = leagues.map(l => avg(byLeague[l]));
@@ -2653,7 +2664,7 @@ function initLeague(rawData) {
   const tbl = document.getElementById('lgTable');
   const th = (t,r=false)=>`<th style="padding:7px 10px;border-bottom:1px solid #333a50;color:#7a8499;font-weight:600;text-align:${r?'right':'left'};white-space:nowrap">${t}</th>`;
   const td = (t,c='#d0d6e8',r=false)=>`<td style="padding:6px 10px;border-bottom:1px solid #1a1d2e;color:${c};text-align:${r?'right':'left'}">${t}</td>`;
-  tbl.innerHTML = `<thead><tr>${th('Tournament')}${th('Year')}${th('Inn',true)}${th('Runs',true)}${th('Avg',true)}${th('SR',true)}${th('HS',true)}${th('Ducks',true)}${th('50s',true)}${th('100s',true)}${th('NO',true)}${th('4s',true)}${th('6s',true)}${th('Dot%',true)}${th('Bndry%',true)}</tr></thead>`;
+  tbl.innerHTML = `<thead><tr>${th('Tournament')}${th('Year')}${th('Mat',true)}${th('Inn',true)}${th('Runs',true)}${th('Avg',true)}${th('SR',true)}${th('HS',true)}${th('Ducks',true)}${th('50s',true)}${th('100s',true)}${th('NO',true)}${th('4s',true)}${th('6s',true)}${th('Dot%',true)}${th('Bndry%',true)}</tr></thead>`;
   const tbody = document.createElement('tbody');
   leagues.forEach((l,i) => {
     const isBest = l === bestLeague;
@@ -2661,6 +2672,7 @@ function initLeague(rawData) {
     tbody.innerHTML += `<tr style="background:${isBest?'rgba(240,160,64,0.06)':''}">
       ${td(shortLabel(l), isBest?'#f0a040':'#d0d6e8')}
       ${td(yr, '#7a8499')}
+      ${td(lgMatches[i],'#d0d6e8',true)}
       ${td(lgInnings[i],'#d0d6e8',true)}
       ${td(lgRuns[i].toLocaleString(),'#d0d6e8',true)}
       ${td(lgAvg[i],'#f0a040',true)}
@@ -4656,7 +4668,8 @@ function initRawData(rawData) {
   const batRows = [], batIndexes = [];
   const bowlRows = [], bowlIndexes = [];
   rows.forEach((r, i) => {
-    if (r['Runs'] !== '') {
+    // Only include real batting innings (exclude DNB)
+    if (r['Runs'] !== '' && r['Runs'] !== 'DNB' && r['Dismissal Type'] !== 'DNB') {
       batRows.push(r);
       batIndexes.push(i);
     }
